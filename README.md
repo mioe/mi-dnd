@@ -6,7 +6,7 @@
 
 ## Cmd
 ```bash
-./pocketbase serve
+./pocketbase-bin serve
 pnpm dev
 
 pnpm build
