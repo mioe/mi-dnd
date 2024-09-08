@@ -1,1 +1,6 @@
-hello: 'Привет'
+hello: Привет
+sign-in:
+  username: Учетная запись
+  password: Пароль
+  submit: Залогиниться
+logout: Выйти из учетной записи

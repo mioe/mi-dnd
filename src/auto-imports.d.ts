@@ -207,6 +207,7 @@ declare global {
   const useObjectUrl: typeof import('@vueuse/core')['useObjectUrl']
   const useOffsetPagination: typeof import('@vueuse/core')['useOffsetPagination']
   const useOnline: typeof import('@vueuse/core')['useOnline']
+  const usePB: typeof import('./composables/usePB')['default']
   const usePageLeave: typeof import('@vueuse/core')['usePageLeave']
   const useParallax: typeof import('@vueuse/core')['useParallax']
   const useParentElement: typeof import('@vueuse/core')['useParentElement']
@@ -508,6 +509,7 @@ declare module 'vue' {
     readonly useObjectUrl: UnwrapRef<typeof import('@vueuse/core')['useObjectUrl']>
     readonly useOffsetPagination: UnwrapRef<typeof import('@vueuse/core')['useOffsetPagination']>
     readonly useOnline: UnwrapRef<typeof import('@vueuse/core')['useOnline']>
+    readonly usePB: UnwrapRef<typeof import('./composables/usePB')['default']>
     readonly usePageLeave: UnwrapRef<typeof import('@vueuse/core')['usePageLeave']>
     readonly useParallax: UnwrapRef<typeof import('@vueuse/core')['useParallax']>
     readonly useParentElement: UnwrapRef<typeof import('@vueuse/core')['useParentElement']>

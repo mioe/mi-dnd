@@ -1,21 +1,31 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { ref } from 'vue'
+const pb = usePB()
 
 export const useAppStore = defineStore('app', () => {
-	const count = ref(0)
+	const currentUser = ref(pb.authStore.model ?? undefined)
 
-	function increment() {
-		count.value++
+	async function signIn({username, password}: {username: string, password: string}) {
+		try {
+			await pb.collection('player').authWithPassword(
+				username,
+				password,
+			)
+			currentUser.value = pb.authStore?.model ?? undefined
+		} catch (err) {
+			console.error(err)
+		}
 	}
 
-	function decrement() {
-		count.value--
+	function logout() {
+		pb.authStore.clear()
+		currentUser.value = undefined
 	}
 
 	return {
-		count,
-		increment,
-		decrement,
+		currentUser,
+
+		signIn,
+		logout,
 	}
 })
 
