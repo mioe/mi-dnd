@@ -1,8 +1,17 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
+import type {ListResult, RecordModel} from 'pocketbase'
 const pb = usePB()
 
 export const useAppStore = defineStore('app', () => {
 	const currentUser = ref(pb.authStore.model ?? undefined)
+	const currentHero = useStorage('current_hero', undefined)
+	const heroesWithPagination = ref<ListResult<RecordModel>>()
+
+	function cleanup() {
+		currentUser.value = undefined
+		currentHero.value = undefined
+		heroesWithPagination.value = undefined
+	}
 
 	async function signIn({username, password}: {username: string, password: string}) {
 		try {
@@ -16,16 +25,29 @@ export const useAppStore = defineStore('app', () => {
 		}
 	}
 
+	async function getMyHeroes() {
+		try {
+			const resultList = await pb.collection('hero').getList(1, 5, {
+				filter: `player.id = "${currentUser.value?.id}"`,
+			})
+			heroesWithPagination.value = resultList
+		} catch (err) {
+			console.error(err)
+		}
+	}
+
 	function logout() {
 		pb.authStore.clear()
-		currentUser.value = undefined
+		cleanup()
 	}
 
 	return {
 		currentUser,
+		heroesWithPagination,
 
 		signIn,
 		logout,
+		getMyHeroes,
 	}
 })
 

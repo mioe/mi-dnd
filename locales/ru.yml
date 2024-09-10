@@ -4,3 +4,20 @@ sign-in:
   password: Пароль
   submit: Залогиниться
 logout: Выйти из учетной записи
+aside: Меню
+page:
+  _:
+    index: Список персонажей
+    gold: Калькулятор золота
+stat:
+  sex: Пол
+  class: Класс
+  background: Предыстория
+  race: Раса
+  alignment: Мировоззрение
+  age: Возраст
+  height: Рост
+  weight: Вес
+  eyes: Глаза
+  skin: Кожа
+  hair: Волосы
