@@ -5,7 +5,7 @@ const props = defineProps<{
 	avatar?: string
 	name?: string
 	sex?: boolean
-	heroClass?: string
+	class?: string
 	background?: string
 	race?: string
 	alignment?: string
@@ -21,7 +21,7 @@ const { t: $t } = useI18n()
 
 const stats = [
 	'sex',
-	'heroClass',
+	'class',
 	'background',
 	'race',
 	'alignment',
@@ -40,7 +40,7 @@ const description = computed(() => {
 
 <template>
 	<section class="flex gap-4 border rounded p-2">
-		<div class="relative aspect-[6/8] h-[140px] flex-shrink-0 overflow-hidden rounded-sm">
+		<div class="relative aspect-[6/8] h-[140px] flex-shrink-0 overflow-hidden rounded-sm sm:h-[200px]">
 			<img
 				v-if="avatar"
 				:src="`http://127.0.0.1:8090/api/files/${collectionId}/${recordId}/${avatar}`"
@@ -58,7 +58,7 @@ const description = computed(() => {
 					:key="desc[0]"
 				>
 					<span class="text-blue-600">
-						{{ desc[0] === 'heroClass' ? $t('stat.class') : $t(`stat.${desc[0]}`) }}:
+						{{ $t(`stat.${desc[0]}`) }}:
 					</span>
 					{{ desc[1] }}<template v-if="idx !== description.length - 1">
 						{{ ' / ' }}

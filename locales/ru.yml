@@ -8,6 +8,7 @@ aside: Меню
 page:
   _:
     index: Список персонажей
+    battle: Режим боя
     gold: Калькулятор золота
 stat:
   sex: Пол
@@ -21,3 +22,5 @@ stat:
   eyes: Глаза
   skin: Кожа
   hair: Волосы
+  initiative: Инициатива
+my-heroes: Мои персонажи

@@ -11,9 +11,26 @@ onMounted(async() => {
 </script>
 
 <template>
-	<header>
+	<header class="p-4">
+		<h1>Текущий игровой персонаж:</h1>
+		<select
+			v-model="appStore.currentHero"
+			class="border rounded px-2 py-1"
+		>
+			<option :value="{}">
+				Выберите персонажа...
+			</option>
+			<option
+				v-for="hero in myHeroes"
+				:key="hero.id"
+				:value="hero"
+			>
+				{{ hero.name }}
+			</option>
+		</select>
 	</header>
 	<div class="flex flex-col gap-2 p-4">
+		<h2>{{ $t('my-heroes') }}:</h2>
 		<ShortHeroCard
 			v-for="hero in myHeroes"
 			:key="hero.id"
@@ -22,7 +39,7 @@ onMounted(async() => {
 			:avatar="hero.avatar"
 			:name="hero.name"
 			:sex="hero.sex"
-			:hero-class="hero.class"
+			:class="hero.class"
 			:background="hero.background"
 			:race="hero.race"
 			:alignment="hero.alignment"

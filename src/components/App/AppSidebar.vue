@@ -57,7 +57,7 @@ const isOpen = ref(false)
 		</div>
 		<div
 			v-else
-			class="w-full flex-1"
+			class="w-full flex flex-1 items-center justify-between gap-2"
 		>
 			<button
 				class="rounded bg-blue-700 px-4 py-1 text-white"
@@ -65,6 +65,13 @@ const isOpen = ref(false)
 			>
 				{{ $t('aside') }}
 			</button>
+
+			<p
+				v-if="appStore.currentHero"
+				class="text-lg text-blue-700 font-bold"
+			>
+				{{ appStore.currentHero.name }}
+			</p>
 		</div>
 	</header>
 
@@ -77,6 +84,9 @@ const isOpen = ref(false)
 			<nav class="flex flex-col gap-4 text-center text-blue-400">
 				<RouterLink to="/_">
 					{{ $t('page._.index') }}
+				</RouterLink>
+				<RouterLink to="/_/battle">
+					{{ $t('page._.battle') }}
 				</RouterLink>
 				<RouterLink to="/_/gold">
 					{{ $t('page._.gold') }}

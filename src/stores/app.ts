@@ -1,10 +1,10 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import type {ListResult, RecordModel} from 'pocketbase'
+import type { ListResult, RecordModel } from 'pocketbase'
 const pb = usePB()
 
 export const useAppStore = defineStore('app', () => {
 	const currentUser = ref(pb.authStore.model ?? undefined)
-	const currentHero = useStorage('current_hero', undefined)
+	const currentHero = useStorage<{ id?: string, name?: string }>('current_hero', {})
 	const heroesWithPagination = ref<ListResult<RecordModel>>()
 
 	function cleanup() {
@@ -41,13 +41,38 @@ export const useAppStore = defineStore('app', () => {
 		cleanup()
 	}
 
+	async function getInitiative() {
+		try {
+			const record = await pb.collection('stat').getFirstListItem(
+				`hero.id = "${currentHero.value.id}"`,
+			)
+			return record.initiative
+		} catch (err) {
+			console.error(err)
+		}
+	}
+
+	async function setInitiative(intVal: number){
+		try {
+			const record = await pb.collection('stat').getFirstListItem(
+				`hero.id = "${currentHero.value.id}"`,
+			)
+			await pb.collection('stat').update(record.id, { initiative: intVal })
+		} catch (err) {
+			console.error(err)
+		}
+	}
+
 	return {
 		currentUser,
+		currentHero,
 		heroesWithPagination,
 
 		signIn,
 		logout,
 		getMyHeroes,
+		getInitiative,
+		setInitiative,
 	}
 })
 
