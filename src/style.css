@@ -16,3 +16,22 @@ input::-webkit-inner-spin-button {
 input[type=number] {
 	-moz-appearance: textfield;
 }
+
+.default-master-table {
+	border-collapse: collapse;
+	font-size: 12px;
+	line-height: 1;
+
+	th {
+		text-align: left;
+	}
+
+	th, td {
+		border: 1px solid rgb(96, 165, 250);
+		padding: 8px;
+	}
+
+	tr:nth-child(even) {
+		background: rgba(96, 165, 250, .2);
+	}
+}

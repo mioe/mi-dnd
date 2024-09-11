@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const router = useRouter()
 const appStore = useAppStore()
+const masterStore = useMasterStore()
 const { signIn, logout } = appStore
 
 const isAuthorized = computed(() => !!appStore.currentUser)
@@ -25,7 +26,10 @@ const isOpen = ref(false)
 </script>
 
 <template>
-	<header class="min-h-[34px] flex justify-center p-4">
+	<header
+		v-if="!masterStore.masterToken"
+		class="min-h-[34px] flex justify-center p-4"
+	>
 		<div v-if="!isAuthorized">
 			<form
 				class="flex flex-wrap items-center justify-center gap-4"
