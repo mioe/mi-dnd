@@ -5,7 +5,8 @@ import App from './App.vue'
  * Styles
  */
 import '@unocss/reset/tailwind.css'
-import './style.css'
+import './styles/fonts.css'
+import './styles/main.css'
 import 'uno.css'
 
 

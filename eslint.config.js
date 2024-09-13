@@ -105,6 +105,8 @@ export default [
 			'!.github',
 			'!.vitepress',
 			'!.vscode',
+			'pb_data',
+			'pb_migrations',
 		],
 	},
 ]
