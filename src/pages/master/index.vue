@@ -212,6 +212,42 @@ onMounted(async() => {
 									data-tip="Класс доспехов"
 								/>
 							</th>
+							<th class="w-[34px]">
+								<div
+									class="i-mi:weight-lifting-up h-[24px] w-full bg-black"
+									data-tip="Сила"
+								/>
+							</th>
+							<th class="w-[34px]">
+								<div
+									class="i-mi:bullseye h-[24px] w-full bg-black"
+									data-tip="Ловкость"
+								/>
+							</th>
+							<th class="w-[34px]">
+								<div
+									class="i-mi:fat h-[24px] w-full bg-black"
+									data-tip="Телосложение"
+								/>
+							</th>
+							<th class="w-[34px]">
+								<div
+									class="i-mi:magick-trick h-[24px] w-full bg-black"
+									data-tip="Интеллект"
+								/>
+							</th>
+							<th class="w-[34px]">
+								<div
+									class="i-mi:wisdom h-[24px] w-full bg-black"
+									data-tip="Мудрость"
+								/>
+							</th>
+							<th class="w-[34px]">
+								<div
+									class="i-mi:rose h-[24px] w-full bg-black"
+									data-tip="Харизма"
+								/>
+							</th>
 							<th class="w-[40px]"></th>
 						</tr>
 					</thead>
@@ -259,6 +295,24 @@ onMounted(async() => {
 									20
 								</td>
 								<td>
+									Си
+								</td>
+								<td>
+									Ло
+								</td>
+								<td>
+									Те
+								</td>
+								<td>
+									Ин
+								</td>
+								<td>
+									Му
+								</td>
+								<td>
+									Ха
+								</td>
+								<td>
 									<div class="flex gap-4">
 										<button @click="handleDuplicateTempUnit(entity)">
 											D
@@ -276,6 +330,12 @@ onMounted(async() => {
 								<td>{{ entity.maxHit }} / {{ entity.currentHit }}</td>
 								<td>{{ entity.initiative }}</td>
 								<td>{{ entity.armor }}</td>
+								<td>{{ entity.strength }}</td>
+								<td>{{ entity.dexterity }}</td>
+								<td>{{ entity.constitution }}</td>
+								<td>{{ entity.intelligence }}</td>
+								<td>{{ entity.wisdom }}</td>
+								<td>{{ entity.charisma }}</td>
 								<td></td>
 							</template>
 						</tr>
