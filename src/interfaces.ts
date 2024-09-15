@@ -5,6 +5,7 @@ export interface HeroStat {
 	currentHit: number
 	tempHit: number
 	initiative: number
+	armor: number
 	speed: number
 
 	proficiencyBonus: number
