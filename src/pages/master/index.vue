@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { HeroStat } from '~/interfaces'
 const pb = usePB()
 
 interface Unit {
@@ -9,12 +10,21 @@ interface Unit {
 	type: 'npc'
 }
 
+interface Hero extends HeroStat {
+	id: string, // stat-id
+	expand: {
+		hero: {
+			name: string
+		}
+	}
+}
+
 const isLoading = ref(true)
-const masterBattle = useStorage<any>('master_battle',[])
+const masterBattle = useStorage<Hero[]>('master_battle', [])
 const tempUnit = useStorage<Unit[]>('master_temp_unit', [])
 const currentBattleStep = useStorage<string>('master_battle_step', '')
 
-const allUnitAndHero = computed(() => {
+const allUnitAndHero = computed<(Hero | Unit)[]>(() => {
 	return [...masterBattle.value, ...tempUnit.value].sort((a, b) => a.initiative - b.initiative)
 })
 
@@ -75,7 +85,7 @@ onKeyStroke('ArrowUp', () => onChangeCurrentBattleStep(-1))
 onKeyStroke('ArrowDown', () => onChangeCurrentBattleStep(1))
 
 onMounted(async() => {
-	const records = await pb.collection('stat').getList(1, 5, { expand: 'hero' })
+	const records = await pb.collection('stat').getList(1, 5, { expand: 'hero' }) as { items: Hero[] }
 	masterBattle.value = records.items
 	isLoading.value = false
 })
@@ -109,7 +119,7 @@ onMounted(async() => {
 							v-for="(entity, entityIdx) in allUnitAndHero"
 							:key="entity.id"
 						>
-							<template v-if="entity.type === 'npc'">
+							<template v-if="'type' in entity">
 								<td>{{ currentBattleStep === entity.id ? '*' : '' }}</td>
 								<td>{{ entityIdx }}</td>
 								<td>
@@ -141,7 +151,7 @@ onMounted(async() => {
 										type="number"
 										class="w-[40px] bg-transparent"
 										:value="entity.initiative"
-										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.initiative = ev.value}"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.initiative = Number(ev.value)}"
 									/>
 								</td>
 								<td>
