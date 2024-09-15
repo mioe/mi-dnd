@@ -7,6 +7,9 @@ import {
 } from 'unocss'
 
 export default defineConfig({
+	shortcuts: [
+		['btn', 'rounded bg-blue-700 px-4 py-1 text-white'],
+	],
 	presets: [
 		presetUno(),
 		presetIcons({

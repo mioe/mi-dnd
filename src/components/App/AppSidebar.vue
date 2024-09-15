@@ -53,7 +53,7 @@ const isOpen = ref(false)
 				/>
 				<button
 					type="submit"
-					class="rounded bg-blue-700 px-4 py-1 text-white"
+					class="btn"
 				>
 					{{ $t('sign-in.submit') }}
 				</button>
@@ -64,7 +64,7 @@ const isOpen = ref(false)
 			class="w-full flex flex-1 items-center justify-between gap-2"
 		>
 			<button
-				class="rounded bg-blue-700 px-4 py-1 text-white"
+				class="btn"
 				@click="isOpen = !isOpen"
 			>
 				{{ $t('aside') }}
