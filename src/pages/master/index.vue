@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import type { HeroStat } from '~/interfaces'
+import type { HeroStat, CoreStat, Stat } from '~/interfaces'
 const pb = usePB()
 
-interface Unit {
+interface Unit extends CoreStat {
 	id: string
 	hit: number
 	name: string
-	initiative: number
 	type: 'npc'
 }
 
@@ -33,7 +32,7 @@ const currentBattleStep = useStorage<string>('master_battle_step', '')
 const masterBattleLogs = useStorage<Log[]>('master_battle_logs', [])
 
 const allUnitAndHero = computed<(Hero | Unit)[]>(() => {
-	return [...heroes.value, ...tempUnit.value].sort((a, b) => a.initiative - b.initiative)
+	return [...heroes.value, ...tempUnit.value].sort((a, b) => b.initiative - a.initiative)
 })
 
 pb.collection('stat').subscribe('*', function(e) {
@@ -48,8 +47,8 @@ pb.collection('stat').subscribe('*', function(e) {
 						cmd: 'hit',
 						author,
 						text: el.currentHit > e.record.currentHit
-							? `${author} получил(а) -${el.currentHit - e.record.currentHit} урона`
-							: `${author} отхил +${(el.currentHit - e.record.currentHit) * -1} хитов`,
+							? `*${author}* получил(а) -${el.currentHit - e.record.currentHit} урона`
+							: `*${author}* отхил +${(el.currentHit - e.record.currentHit) * -1} хитов`,
 					})
 					el.currentHit = e.record.currentHit
 				}
@@ -71,11 +70,20 @@ function addTempUnit() {
 		id: crypto.randomUUID(),
 		name: `Временный моб #${tempUnit.value.length + 1}`,
 		hit: 20,
-		initiative: 22,
 		type: 'npc',
+		initiative: 0,
+		armor: 0,
+		speed: 0,
+		strength: 0,
+		dexterity: 0,
+		constitution: 0,
+		intelligence: 0,
+		wisdom: 0,
+		charisma: 0,
 	})
 }
 
+const masterBattleLogsRef = shallowRef()
 function commitLog({ cmd, text, author }: { cmd: 'step' | 'round' | 'start' | 'hit' | 'initiative', text?: string, author?: string }) {
 	const cmds = {
 		step: {
@@ -105,6 +113,10 @@ function commitLog({ cmd, text, author }: { cmd: 'step' | 'round' | 'start' | 'h
 		date: Date.now(),
 		author: cmds[cmd].author,
 		body: cmds[cmd].body,
+	})
+
+	nextTick(() => {
+		masterBattleLogsRef.value.scrollTop = masterBattleLogsRef.value.scrollHeight
 	})
 }
 
@@ -157,6 +169,14 @@ function initBattle() {
 		cmd: 'step',
 		text: 'type' in currentEntity ? currentEntity.name : currentEntity.expand.hero.name,
 	})
+}
+
+function checkForSavingThrows(hero: Hero, statKey: Stat) {
+	return hero.savingThrows.includes(statKey)
+}
+
+function getStat(hero: Hero, statKey: Stat) {
+	return hero[statKey] > 0 ? `+${hero[statKey]}` : hero[statKey]
 }
 
 onKeyStroke('ArrowUp', () => onChangeCurrentBattleStep(-1))
@@ -279,7 +299,7 @@ onMounted(async() => {
 										<input
 											type="number"
 											class="w-[40px] bg-transparent"
-											@keyup.enter="($event) => { const ev = $event.target as HTMLInputElement; entity.hit -= Number(ev.value); ev.value = ''; ev.blur() }"
+											@keyup.enter="($event) => { const ev = $event.target as HTMLInputElement; const val = Number(ev.value); entity.hit -= val; ev.value = ''; commitLog({ cmd: 'hit', author: 'master', text: val > 0 ? `*${entity.name}* получил(а) -${val} урона` : `*${entity.name}* отхил +${val * -1} хитов` }); ev.blur() }"
 										/>
 									</div>
 								</td>
@@ -292,25 +312,60 @@ onMounted(async() => {
 									/>
 								</td>
 								<td>
-									20
+									<input
+										type="number"
+										class="w-[25px] bg-transparent"
+										:value="entity.armor"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.armor = Number(ev.value)}"
+									/>
 								</td>
 								<td>
-									Си
+									<input
+										type="number"
+										class="w-[25px] bg-transparent"
+										:value="entity.strength"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.strength = Number(ev.value)}"
+									/>
 								</td>
 								<td>
-									Ло
+									<input
+										type="number"
+										class="w-[25px] bg-transparent"
+										:value="entity.dexterity"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.dexterity = Number(ev.value)}"
+									/>
 								</td>
 								<td>
-									Те
+									<input
+										type="number"
+										class="w-[25px] bg-transparent"
+										:value="entity.constitution"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.constitution = Number(ev.value)}"
+									/>
 								</td>
 								<td>
-									Ин
+									<input
+										type="number"
+										class="w-[25px] bg-transparent"
+										:value="entity.intelligence"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.intelligence = Number(ev.value)}"
+									/>
 								</td>
 								<td>
-									Му
+									<input
+										type="number"
+										class="w-[25px] bg-transparent"
+										:value="entity.wisdom"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.wisdom = Number(ev.value)}"
+									/>
 								</td>
 								<td>
-									Ха
+									<input
+										type="number"
+										class="w-[25px] bg-transparent"
+										:value="entity.charisma"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.charisma = Number(ev.value)}"
+									/>
 								</td>
 								<td>
 									<div class="flex gap-4">
@@ -327,15 +382,54 @@ onMounted(async() => {
 								<td>{{ currentBattleStep === entity.id ? '*' : '' }}</td>
 								<td>{{ entityIdx }}</td>
 								<td>{{ entity.expand.hero.name }}</td>
-								<td>{{ entity.maxHit }} / {{ entity.currentHit }}</td>
+								<td>
+									<div class="flex justify-between">
+										<span>{{ entity.currentHit }}</span>
+										<span>/</span>
+										<span
+											data-tip="Максимум хитов"
+											class="text-green-600 font-bold"
+										>{{ entity.maxHit }}</span>
+									</div>
+								</td>
 								<td>{{ entity.initiative }}</td>
 								<td>{{ entity.armor }}</td>
-								<td>{{ entity.strength }}</td>
-								<td>{{ entity.dexterity }}</td>
-								<td>{{ entity.constitution }}</td>
-								<td>{{ entity.intelligence }}</td>
-								<td>{{ entity.wisdom }}</td>
-								<td>{{ entity.charisma }}</td>
+								<td
+									:data-tip="checkForSavingThrows(entity, 'strength') ? 'Спасбросок' : undefined"
+									:class="checkForSavingThrows(entity, 'strength') && 'text-green-600 font-bold'"
+								>
+									{{ getStat(entity, 'strength') }}
+								</td>
+								<td
+									:data-tip="checkForSavingThrows(entity, 'dexterity') ? 'Спасбросок' : undefined"
+									:class="checkForSavingThrows(entity, 'dexterity') && 'text-green-600 font-bold'"
+								>
+									{{ getStat(entity, 'dexterity') }}
+								</td>
+								<td
+									:data-tip="checkForSavingThrows(entity, 'constitution') ? 'Спасбросок' : undefined"
+									:class="checkForSavingThrows(entity, 'constitution') && 'text-green-600 font-bold'"
+								>
+									{{ getStat(entity, 'constitution') }}
+								</td>
+								<td
+									:data-tip="checkForSavingThrows(entity, 'intelligence') ? 'Спасбросок' : undefined"
+									:class="checkForSavingThrows(entity, 'intelligence') && 'text-green-600 font-bold'"
+								>
+									{{ getStat(entity, 'intelligence') }}
+								</td>
+								<td
+									:data-tip="checkForSavingThrows(entity, 'wisdom') ? 'Спасбросок' : undefined"
+									:class="checkForSavingThrows(entity, 'wisdom') && 'text-green-600 font-bold'"
+								>
+									{{ getStat(entity, 'wisdom') }}
+								</td>
+								<td
+									:data-tip="checkForSavingThrows(entity, 'charisma') ? 'Спасбросок' : undefined"
+									:class="checkForSavingThrows(entity, 'charisma') && 'text-green-600 font-bold'"
+								>
+									{{ getStat(entity, 'charisma') }}
+								</td>
 								<td></td>
 							</template>
 						</tr>
@@ -358,23 +452,26 @@ onMounted(async() => {
 
 					<button
 						class="btn text-[12px]"
-						@click="onChangeCurrentBattleStep(1)"
+						@click="onChangeCurrentBattleStep(-1)"
 					>
-						Next
+						Prev
 					</button>
 
 					<button
 						class="btn text-[12px]"
-						@click="onChangeCurrentBattleStep(-1)"
+						@click="onChangeCurrentBattleStep(1)"
 					>
-						Prev
+						Next
 					</button>
 				</footer>
 			</section>
 
 			<section class="flex flex-col gap-2">
 				<h2>Логи боя</h2>
-				<ul class="rounded bg-gray-200 p-2 text-[10px]">
+				<ul
+					ref="masterBattleLogsRef"
+					class="h-[220px] flex flex-col overflow-auto rounded bg-gray-200 p-2 text-[10px]"
+				>
 					<li
 						v-for="log in masterBattleLogs"
 						:key="log.id"
