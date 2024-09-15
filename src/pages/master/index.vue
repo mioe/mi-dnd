@@ -72,8 +72,10 @@ function addTempUnit() {
 		hit: 20,
 		type: 'npc',
 		initiative: 0,
-		armor: 0,
 		speed: 0,
+		proficiencyBonus: 0,
+		armor: 0,
+		armorType: '',
 		strength: 0,
 		dexterity: 0,
 		constitution: 0,
@@ -228,9 +230,26 @@ onMounted(async() => {
 							</th>
 							<th class="w-[34px]">
 								<div
+									class="i-mi:wingfoot h-[24px] w-full bg-black"
+									data-tip="Скорость"
+								/>
+							</th>
+							<th class="w-[34px]">
+								<div
+									class="i-mi:muscle-fat h-[24px] w-full bg-black"
+									data-tip="Бонус мастерства"
+								/>
+							</th>
+							<th class="w-[34px]">
+								<div
 									class="i-mi:barbute h-[24px] w-full bg-black"
 									data-tip="Класс доспехов"
 								/>
+							</th>
+							<th class="w-[120px]">
+								<span class="px-[4px]">
+									Тип доспехов
+								</span>
 							</th>
 							<th class="w-[34px]">
 								<div
@@ -315,8 +334,32 @@ onMounted(async() => {
 									<input
 										type="number"
 										class="w-[25px] bg-transparent"
+										:value="entity.speed"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.speed = Number(ev.value)}"
+									/>
+								</td>
+								<td>
+									<input
+										type="number"
+										class="w-[25px] bg-transparent"
+										:value="entity.proficiencyBonus"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.proficiencyBonus = Number(ev.value)}"
+									/>
+								</td>
+								<td>
+									<input
+										type="number"
+										class="w-[25px] bg-transparent"
 										:value="entity.armor"
 										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.armor = Number(ev.value)}"
+									/>
+								</td>
+								<td>
+									<input
+										type="number"
+										class="w-[110px] bg-transparent"
+										:value="entity.armorType"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.armorType = ev.value}"
 									/>
 								</td>
 								<td>
@@ -373,7 +416,7 @@ onMounted(async() => {
 											D
 										</button>
 										<button @click="handleRemoveTempUnit(entity.id)">
-											X
+											R
 										</button>
 									</div>
 								</td>
@@ -393,7 +436,10 @@ onMounted(async() => {
 									</div>
 								</td>
 								<td>{{ entity.initiative }}</td>
+								<td>{{ entity.speed }}</td>
+								<td>{{ getStat(entity, 'proficiencyBonus') }}</td>
 								<td>{{ entity.armor }}</td>
+								<td>{{ entity.armorType }}</td>
 								<td
 									:data-tip="checkForSavingThrows(entity, 'strength') ? 'Спасбросок' : undefined"
 									:class="checkForSavingThrows(entity, 'strength') && 'text-green-600 font-bold'"

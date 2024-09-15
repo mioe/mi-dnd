@@ -1,9 +1,11 @@
-export type Stat = 'strength' | 'dexterity' | 'constitution' | 'intelligence' | 'wisdom' | 'charisma'
+export type Stat = 'strength' | 'dexterity' | 'constitution' | 'intelligence' | 'wisdom' | 'charisma' | 'proficiencyBonus'
 
 export interface CoreStat {
 	initiative: number
-	armor: number
 	speed: number
+	proficiencyBonus: number
+	armor: number
+	armorType: string
 
 	strength: number
 	dexterity: number
@@ -18,7 +20,6 @@ export interface HeroStat extends CoreStat{
 	currentHit: number
 	tempHit: number
 
-	proficiencyBonus: number
 
 	savingThrows: Stat[]
 
