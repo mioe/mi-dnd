@@ -168,28 +168,28 @@ onMounted(async() => {
 				</table>
 				<footer class="flex flex-wrap gap-2">
 					<button
-						class="btn"
+						class="btn text-[12px]"
 						@click="addTempUnit"
 					>
 						Добавить моба
 					</button>
 
 					<button
-						class="btn"
+						class="btn text-[12px]"
 						@click="initBattle"
 					>
 						Начать бой
 					</button>
 
 					<button
-						class="btn"
+						class="btn text-[12px]"
 						@click="onChangeCurrentBattleStep(1)"
 					>
 						Next
 					</button>
 
 					<button
-						class="btn"
+						class="btn text-[12px]"
 						@click="onChangeCurrentBattleStep(-1)"
 					>
 						Prev
