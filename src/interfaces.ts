@@ -1,5 +1,7 @@
 export type Stat = 'strength' | 'dexterity' | 'constitution' | 'intelligence' | 'wisdom' | 'charisma' | 'proficiencyBonus'
 
+export type Skill = 'acrobatics' | 'animalHandling' | 'arcana' | 'athletics' | 'deception' | 'history' | 'insight' | 'intimidation' | 'investigation' | 'medicine' | 'nature' | 'perception' | 'performance' | 'persuasion' | 'religion' | 'sleightOfHand' | 'stealth' | 'survival'
+
 export interface CoreStat {
 	initiative: number
 	speed: number
@@ -23,7 +25,7 @@ export interface HeroStat extends CoreStat{
 
 	savingThrows: Stat[]
 
-	skills: ('acrobatics' | 'animalHandling' | 'arcana' | 'athletics' | 'deception' | 'history' | 'insight' | 'intimidation' | 'investigation' | 'medicine' | 'nature' | 'perception' | 'performance' | 'persuasion' | 'religion' | 'sleightOfHand' | 'stealth' | 'survival')[]
+	skills: Skill[]
 
 	passiveWisdom: number
 

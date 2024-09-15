@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { HeroStat, CoreStat, Stat } from '~/interfaces'
+import type { HeroStat, CoreStat, Stat, Skill } from '~/interfaces'
 const pb = usePB()
 
 interface Unit extends CoreStat {
@@ -181,6 +181,16 @@ function getStat(hero: Hero, statKey: Stat) {
 	return hero[statKey] > 0 ? `+${hero[statKey]}` : hero[statKey]
 }
 
+function getSkill(hero: Hero, statKey: Stat, skillKey: Skill) {
+	const skill = hero.skills.includes(skillKey)
+	const val = skill
+		? hero[statKey] + hero.proficiencyBonus
+		: hero[statKey]
+	return val > 0
+		? `${skill ? '[*] ' : '| | '}+${val}`
+		: `${skill ? '[*] ' : '| | '}${val}`
+}
+
 onKeyStroke('ArrowUp', () => onChangeCurrentBattleStep(-1))
 onKeyStroke('ArrowDown', () => onChangeCurrentBattleStep(1))
 
@@ -200,6 +210,123 @@ onMounted(async() => {
 			<h1 class="text-blue-700">
 				Доска мастера
 			</h1>
+
+			<details>
+				<summary class="select-none">
+					Карточки персонажей
+				</summary>
+				<section class="mt-2 flex gap-2">
+					<div
+						v-for="hero in heroes"
+						:key="hero.id"
+						class="flex flex-col border rounded p-2"
+					>
+						<h2 class="text-blue-600 font-bold">
+							{{ hero.expand.hero.name }}
+						</h2>
+						<div class="flex text-[10px]">
+							<div class="flex flex-col border-r pr-2">
+								<h3>Навыки</h3>
+
+								<article class="flex gap-2">
+									<div>{{ getSkill(hero, 'dexterity', 'acrobatics') }}</div>
+									<span>Акробатика (Лов)</span>
+								</article>
+
+								<article class="flex gap-2">
+									<div>{{ getSkill(hero, 'intelligence', 'investigation') }}</div>
+									<span>Анализ (Инт)</span>
+								</article>
+
+								<article class="flex gap-2">
+									<div>{{ getSkill(hero, 'strength', 'athletics') }}</div>
+									<span>Атлетика (Сил)</span>
+								</article>
+
+								<article class="flex gap-2">
+									<div>{{ getSkill(hero, 'wisdom', 'perception') }}</div>
+									<span>Внимательность (Мдр)</span>
+								</article>
+
+								<article class="flex gap-2">
+									<div>{{ getSkill(hero, 'wisdom', 'survival') }}</div>
+									<span>Выживание (Мдр)</span>
+								</article>
+
+								<article class="flex gap-2">
+									<div>{{ getSkill(hero, 'charisma', 'performance') }}</div>
+									<span>Выступление (Хар)</span>
+								</article>
+
+								<article class="flex gap-2">
+									<div>{{ getSkill(hero, 'charisma', 'intimidation') }}</div>
+									<span>Запугивание (Хар)</span>
+								</article>
+
+								<article class="flex gap-2">
+									<div>{{ getSkill(hero, 'intelligence', 'history') }}</div>
+									<span>История (Инт)</span>
+								</article>
+
+								<article class="flex gap-2">
+									<div>{{ getSkill(hero, 'dexterity', 'sleightOfHand') }}</div>
+									<span>Ловкость рук (Лов)</span>
+								</article>
+
+								<article class="flex gap-2">
+									<div>{{ getSkill(hero, 'intelligence', 'arcana') }}</div>
+									<span>Магия (Инт)</span>
+								</article>
+
+								<article class="flex gap-2">
+									<div>{{ getSkill(hero, 'wisdom', 'medicine') }}</div>
+									<span>Медицина (Мдр)</span>
+								</article>
+
+								<article class="flex gap-2">
+									<div>{{ getSkill(hero, 'charisma', 'deception') }}</div>
+									<span>Обман (Хар)</span>
+								</article>
+
+								<article class="flex gap-2">
+									<div>{{ getSkill(hero, 'intelligence', 'nature') }}</div>
+									<span>Природа (Инт)</span>
+								</article>
+
+								<article class="flex gap-2">
+									<div>{{ getSkill(hero, 'wisdom', 'insight') }}</div>
+									<span>Проницательность (Мдр)</span>
+								</article>
+
+								<article class="flex gap-2">
+									<div>{{ getSkill(hero, 'intelligence', 'religion') }}</div>
+									<span>Религия (Инт)</span>
+								</article>
+
+								<article class="flex gap-2">
+									<div>{{ getSkill(hero, 'dexterity', 'stealth') }}</div>
+									<span>Скрытность (Лов)</span>
+								</article>
+
+								<article class="flex gap-2">
+									<div>{{ getSkill(hero, 'charisma', 'persuasion') }}</div>
+									<span>Убеждение (Хар)</span>
+								</article>
+
+								<article class="flex gap-2">
+									<div>{{ getSkill(hero, 'wisdom', 'animalHandling') }}</div>
+									<span>Уход за животными (Мдр)</span>
+								</article>
+							</div>
+
+							<div class="flex flex-col pl-2">
+								<h2>Умения</h2>
+								<p>todo</p>
+							</div>
+						</div>
+					</div>
+				</section>
+			</details>
 
 			<section class="flex flex-col gap-2">
 				<h2>Режим боя</h2>
