@@ -56,7 +56,24 @@ onMounted(async() => {
 		sp: record.silver,
 		cp: record.copper,
 	})
+	pb.collection('gold').subscribe(currentPieceRecordId.value, function(e) {
+		console.log(e.action)
+		console.log(e.record)
+		if (e.action === 'update') {
+			setPieces({
+				pp: e.record.platinum,
+				gp: e.record.gold,
+				ep: e.record.electrum,
+				sp: e.record.silver,
+				cp: e.record.copper,
+			})
+		}
+	})
 	isLoading.value = false
+})
+
+onUnmounted(() => {
+	pb.collection('gold').unsubscribe(currentPieceRecordId.value)
 })
 </script>
 
