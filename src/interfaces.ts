@@ -2,6 +2,8 @@ export type Stat = 'strength' | 'dexterity' | 'constitution' | 'intelligence' | 
 
 export type Skill = 'acrobatics' | 'animalHandling' | 'arcana' | 'athletics' | 'deception' | 'history' | 'insight' | 'intimidation' | 'investigation' | 'medicine' | 'nature' | 'perception' | 'performance' | 'persuasion' | 'religion' | 'sleightOfHand' | 'stealth' | 'survival'
 
+export type Piece = 'platinum' | 'gold' | 'electrum' | 'silver' | 'copper'
+
 export interface CoreStat {
 	initiative: number
 	speed: number

@@ -312,9 +312,14 @@ function handleAddTempUnitsToBattle() {
 /** < Бестиарии */
 
 onMounted(async() => {
-	const records = await pb.collection('stat').getList(1, 5, { expand: 'hero' }) as { items: Hero[] }
+	const records = await pb.collection('stat')
+		.getList(1, 5, { expand: 'hero' }) as { items: Hero[] }
 	heroes.value = records.items
 	isLoading.value = false
+})
+
+onUnmounted(() => {
+	pb.collection('stat').unsubscribe()
 })
 </script>
 

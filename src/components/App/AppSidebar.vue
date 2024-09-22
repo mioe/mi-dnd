@@ -28,7 +28,7 @@ const isOpen = ref(false)
 <template>
 	<header
 		v-if="!masterStore.masterToken"
-		class="min-h-[34px] flex justify-center p-4"
+		class="min-h-[34px] flex justify-center border-b p-4"
 	>
 		<div v-if="!isAuthorized">
 			<form

@@ -10,6 +10,9 @@ export default defineConfig({
 	shortcuts: [
 		['btn', 'rounded bg-blue-700 px-4 py-1 text-white'],
 	],
+	rules: [
+		['scrolling-touch', { '-webkit-overflow-scrolling': 'touch' }],
+	],
 	presets: [
 		presetUno(),
 		presetIcons({

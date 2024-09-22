@@ -27,3 +27,18 @@ stat:
   currentHit: Текущие хиты
   tempHit: Временные хиты
 my-heroes: Мои персонажи
+copper:
+  short: мм
+  long: Медные монеты
+silver:
+  short: cм
+  long: Серебряные монеты
+electrum:
+  short: эм
+  long: Электрумовые монеты
+gold:
+  short: зм
+  long: Золотые монеты
+platinum:
+  short: пм
+  long: Платиновые монеты
