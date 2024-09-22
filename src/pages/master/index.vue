@@ -72,26 +72,6 @@ pb.collection('stat').subscribe('*', function(e) {
 	}
 }, { expand: 'hero' })
 
-// function addTempUnit() {
-// tempUnit.value.push({
-// 	id: crypto.randomUUID(),
-// 	name: `Временный моб #${tempUnit.value.length + 1}`,
-// 	hit: 20,
-// 	type: 'npc',
-// 	initiative: 0,
-// 	speed: 0,
-// 	proficiencyBonus: 0,
-// 	armor: 0,
-// 	armorType: '',
-// 	strength: 0,
-// 	dexterity: 0,
-// 	constitution: 0,
-// 	intelligence: 0,
-// 	wisdom: 0,
-// 	charisma: 0,
-// })
-// }
-
 const masterBattleLogsRef = shallowRef()
 function commitLog({ cmd, text, author }: { cmd: 'step' | 'round' | 'start' | 'hit' | 'initiative', text?: string, author?: string }) {
 	const cmds = {
@@ -254,6 +234,60 @@ function handleDuplicateBufferTempUnit(unit: Unit) {
 function handleRemoveBufferTempUnit(id: string) {
 	bufferTempUnit.value = bufferTempUnit.value.filter((unit) => unit.id !== id)
 }
+
+const { open: openMerge, onChange } = useFileDialog({
+	accept: 'application/json',
+})
+
+async function parseJsonFile(file: File) {
+	return new Promise((resolve, reject) => {
+		const fileReader = new FileReader()
+		fileReader.onload = event => {
+			if (event.target) {
+				return resolve(JSON.parse(event.target.result as string))
+			}
+			return { units: [] }
+		}
+		fileReader.onerror = error => reject(error)
+		fileReader.readAsText(file)
+	})
+}
+
+onChange(async(files) => {
+	if (files?.length) {
+		const file = files[0]
+		try {
+			const result = await parseJsonFile(file) as { units: Unit[] }
+			if (result?.units.length) {
+				const newUnitsWithUniqId = result.units.map(unit => ({
+					...unit,
+					id: crypto.randomUUID(),
+					type: 'npc',
+				})) as Unit[]
+				bufferTempUnit.value = [...bufferTempUnit.value, ...newUnitsWithUniqId]
+			}
+		} catch (err) {
+			console.log('🦕 Что-то не так с файлом { units: [] }', err)
+		}
+	}
+})
+
+function exportBufferTempUnit() {
+	let j = document.createElement('a')
+	j.download = 'midnd-units-'+Date.now()+'.json'
+	j.href = URL.createObjectURL(new Blob([JSON.stringify({ units: [...bufferTempUnit.value] }, null, 2)]))
+	j.click()
+}
+
+const checkedIdsBufferTempUnit = ref<string[]>([])
+
+function handleAddTempUnitsToBattle() {
+	const selectedUnits = bufferTempUnit.value.filter(unit => checkedIdsBufferTempUnit.value.includes(unit.id))
+	const uniqUnits = selectedUnits.map(unit => ({ ...unit, id: crypto.randomUUID() }))
+	tempUnit.value = [...tempUnit.value, ...uniqUnits]
+	checkedIdsBufferTempUnit.value = []
+}
+
 /** < Бестиарии */
 
 onMounted(async() => {
@@ -273,7 +307,7 @@ onMounted(async() => {
 				Доска мастера
 			</h1>
 
-			<details>
+			<details v-if="heroes.length">
 				<summary class="select-none">
 					Карточки персонажей
 				</summary>
@@ -390,9 +424,31 @@ onMounted(async() => {
 				</section>
 			</details>
 
+			<details v-if="tempUnit.length">
+				<summary class="select-none">
+					Карточки бестиарии
+				</summary>
+				<section class="mt-2 flex gap-2">
+					<div
+						v-for="unit in tempUnit"
+						:key="unit.id"
+						class="flex flex-col border rounded p-2"
+					>
+						<h2 class="text-blue-600 font-bold">
+							{{ unit.name }}
+						</h2>
+						<div class="text-[12px]">
+							{{ unit.note }}
+						</div>
+					</div>
+				</section>
+			</details>
+
 			<section class="flex flex-col gap-2">
 				<h2>Режим боя</h2>
-				<MasterEntityTable>
+				<MasterEntityTable
+					:empty="allUnitAndHero.length === 0"
+				>
 					<template #tbody>
 						<tr
 							v-for="(entity, entityIdx) in allUnitAndHero"
@@ -775,7 +831,14 @@ onMounted(async() => {
 								v-for="entity in bufferTempUnit"
 								:key="entity.id"
 							>
-								<td colspan="2">
+								<td>
+									<input
+										v-model="checkedIdsBufferTempUnit"
+										type="checkbox"
+										:value="entity.id"
+									/>
+								</td>
+								<td>
 									{{ entity.note ? `note: ${entity.note}` : '' }}
 								</td>
 								<td
@@ -898,15 +961,24 @@ onMounted(async() => {
 				</div>
 				<header class="flex flex-wrap justify-between gap-2">
 					<div class="flex gap-2">
-						<button class="btn text-[12px]">
+						<button
+							class="btn text-[12px]"
+							@click="openMerge()"
+						>
 							Merge json
 						</button>
-						<button class="btn text-[12px]">
-							Export buffer
+						<button
+							class="btn text-[12px]"
+							@click="exportBufferTempUnit"
+						>
+							Export buffer json
 						</button>
 					</div>
 
-					<button class="btn text-[12px]">
+					<button
+						class="btn text-[12px]"
+						@click="handleAddTempUnitsToBattle"
+					>
 						Добавить в бой
 					</button>
 				</header>
