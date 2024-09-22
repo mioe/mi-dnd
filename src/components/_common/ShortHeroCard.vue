@@ -43,7 +43,7 @@ const description = computed(() => {
 		<div class="relative aspect-[6/8] h-[140px] flex-shrink-0 overflow-hidden rounded-sm sm:h-[200px]">
 			<img
 				v-if="avatar"
-				:src="`http://127.0.0.1:8090/api/files/${collectionId}/${recordId}/${avatar}`"
+				:src="`/api/files/${collectionId}/${recordId}/${avatar}`"
 				:alt="recordId"
 				class="h-full w-full object-cover"
 			/>

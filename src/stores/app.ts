@@ -41,23 +41,23 @@ export const useAppStore = defineStore('app', () => {
 		cleanup()
 	}
 
-	async function getInitiative() {
+	async function getStats() {
 		try {
 			const record = await pb.collection('stat').getFirstListItem(
 				`hero.id = "${currentHero.value.id}"`,
 			)
-			return record.initiative
+			return record
 		} catch (err) {
 			console.error(err)
 		}
 	}
 
-	async function setInitiative(intVal: number){
+	async function setStat(key: string, val: number | string | boolean){
 		try {
 			const record = await pb.collection('stat').getFirstListItem(
 				`hero.id = "${currentHero.value.id}"`,
 			)
-			await pb.collection('stat').update(record.id, { initiative: intVal })
+			await pb.collection('stat').update(record.id, { [key]: val })
 		} catch (err) {
 			console.error(err)
 		}
@@ -71,8 +71,8 @@ export const useAppStore = defineStore('app', () => {
 		signIn,
 		logout,
 		getMyHeroes,
-		getInitiative,
-		setInitiative,
+		getStats,
+		setStat,
 	}
 })
 

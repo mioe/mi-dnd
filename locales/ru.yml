@@ -23,4 +23,7 @@ stat:
   skin: Кожа
   hair: Волосы
   initiative: Инициатива
+  maxHit: Максимум хитов
+  currentHit: Текущие хиты
+  tempHit: Временные хиты
 my-heroes: Мои персонажи

@@ -36,6 +36,10 @@ const tempUnit = useStorage<Unit[]>('master_temp_unit', [])
 const currentBattleStep = useStorage<string>('master_battle_step', '')
 const masterBattleLogs = useStorage<Log[]>('master_battle_logs', [])
 
+const getUUID = () => '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, c =>
+	(+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16),
+)
+
 const simpleDialogRef = shallowRef<InstanceType<typeof SimpleDialog> | undefined>()
 
 const allUnitAndHero = computed<(Hero | Unit)[]>(() => {
@@ -73,7 +77,22 @@ pb.collection('stat').subscribe('*', function(e) {
 }, { expand: 'hero' })
 
 const masterBattleLogsRef = shallowRef()
+const clearLogsBtnRef = shallowRef()
+
+function onLongPressCallbackHookClearLogs() {
+	masterBattleLogs.value = []
+}
+
+onLongPress(
+	clearLogsBtnRef,
+	onLongPressCallbackHookClearLogs,
+	{
+		delay: 1000,
+	},
+)
+
 function commitLog({ cmd, text, author }: { cmd: 'step' | 'round' | 'start' | 'hit' | 'initiative', text?: string, author?: string }) {
+	console.log('🦕 commitLog', { cmd, text, author })
 	const cmds = {
 		step: {
 			author: 'master',
@@ -98,7 +117,7 @@ function commitLog({ cmd, text, author }: { cmd: 'step' | 'round' | 'start' | 'h
 	}
 
 	masterBattleLogs.value.push({
-		id: crypto.randomUUID(),
+		id: getUUID(),
 		date: Date.now(),
 		author: cmds[cmd].author,
 		body: cmds[cmd].body,
@@ -145,7 +164,8 @@ function handleRemoveTempUnit(id: string) {
 function handleDuplicateTempUnit(unit: Unit) {
 	tempUnit.value.push({
 		...unit,
-		id: crypto.randomUUID(),
+		id: getUUID(),
+		name: `${unit.name.split('#')[0].trim()} #${tempUnit.value.filter(u => u.name.split('#')[0].trim().includes(unit.name.split('#')[0].trim())).length}`,
 	})
 }
 
@@ -203,7 +223,7 @@ const tempUnitForm = reactive({
 function addToBuffetTempUnit() {
 	bufferTempUnit.value.push({
 		...tempUnitForm,
-		id: crypto.randomUUID(),
+		id: getUUID(),
 		type: 'npc',
 	})
 
@@ -227,7 +247,7 @@ function addToBuffetTempUnit() {
 function handleDuplicateBufferTempUnit(unit: Unit) {
 	bufferTempUnit.value.push({
 		...unit,
-		id: crypto.randomUUID(),
+		id: getUUID(),
 	})
 }
 
@@ -261,7 +281,7 @@ onChange(async(files) => {
 			if (result?.units.length) {
 				const newUnitsWithUniqId = result.units.map(unit => ({
 					...unit,
-					id: crypto.randomUUID(),
+					id: getUUID(),
 					type: 'npc',
 				})) as Unit[]
 				bufferTempUnit.value = [...bufferTempUnit.value, ...newUnitsWithUniqId]
@@ -283,7 +303,7 @@ const checkedIdsBufferTempUnit = ref<string[]>([])
 
 function handleAddTempUnitsToBattle() {
 	const selectedUnits = bufferTempUnit.value.filter(unit => checkedIdsBufferTempUnit.value.includes(unit.id))
-	const uniqUnits = selectedUnits.map(unit => ({ ...unit, id: crypto.randomUUID() }))
+	const uniqUnits = selectedUnits.map(unit => ({ ...unit, id: getUUID() }))
 	tempUnit.value = [...tempUnit.value, ...uniqUnits]
 	checkedIdsBufferTempUnit.value = []
 }
@@ -671,7 +691,7 @@ onMounted(async() => {
 				</footer>
 			</section>
 
-			<section class="flex flex-col gap-2">
+			<section class="relative flex flex-col gap-2">
 				<h2>Логи боя</h2>
 				<ul
 					ref="masterBattleLogsRef"
@@ -689,6 +709,13 @@ onMounted(async() => {
 						<span class="flex-shrink-0 text-blue-700">{{ log.author }}</span>
 					</li>
 				</ul>
+
+				<button
+					ref="clearLogsBtnRef"
+					class="absolute bottom-2 right-2 btn text-[10px]"
+				>
+					clear (press 1 sec)
+				</button>
 			</section>
 		</div>
 		<p v-else>
