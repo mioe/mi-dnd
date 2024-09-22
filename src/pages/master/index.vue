@@ -2,6 +2,7 @@
 import type { HeroStat, CoreStat, Stat, Skill } from '~/interfaces'
 import SimpleDialog from '~/components/_common/SimpleDialog.vue'
 import MasterEntityTable from '~/components/Master/MasterEntityTable.vue'
+import MasterHideBtn from '~/components/Master/MasterHideBtn.vue'
 const pb = usePB()
 
 interface Unit extends CoreStat {
@@ -69,26 +70,25 @@ pb.collection('stat').subscribe('*', function(e) {
 	}
 }, { expand: 'hero' })
 
-function addTempUnit() {
-	simpleDialogRef.value?.open()
-	// tempUnit.value.push({
-	// 	id: crypto.randomUUID(),
-	// 	name: `Временный моб #${tempUnit.value.length + 1}`,
-	// 	hit: 20,
-	// 	type: 'npc',
-	// 	initiative: 0,
-	// 	speed: 0,
-	// 	proficiencyBonus: 0,
-	// 	armor: 0,
-	// 	armorType: '',
-	// 	strength: 0,
-	// 	dexterity: 0,
-	// 	constitution: 0,
-	// 	intelligence: 0,
-	// 	wisdom: 0,
-	// 	charisma: 0,
-	// })
-}
+// function addTempUnit() {
+// tempUnit.value.push({
+// 	id: crypto.randomUUID(),
+// 	name: `Временный моб #${tempUnit.value.length + 1}`,
+// 	hit: 20,
+// 	type: 'npc',
+// 	initiative: 0,
+// 	speed: 0,
+// 	proficiencyBonus: 0,
+// 	armor: 0,
+// 	armorType: '',
+// 	strength: 0,
+// 	dexterity: 0,
+// 	constitution: 0,
+// 	intelligence: 0,
+// 	wisdom: 0,
+// 	charisma: 0,
+// })
+// }
 
 const masterBattleLogsRef = shallowRef()
 function commitLog({ cmd, text, author }: { cmd: 'step' | 'round' | 'start' | 'hit' | 'initiative', text?: string, author?: string }) {
@@ -582,13 +582,26 @@ onMounted(async() => {
 			isLoading...
 		</p>
 
-		<SimpleDialog ref="simpleDialogRef">
-			<div class="w-[1000px] flex">
-				<MasterEntityTable full>
+		<SimpleDialog
+			ref="simpleDialogRef"
+			title="Бестиарий"
+		>
+			<div class="w-[1000px] flex flex-col gap-2">
+				<header>
+					<button class="btn text-[12px]">
+						ff
+					</button>
+				</header>
+				<MasterEntityTable
+					full
+					empty
+				>
 					<template #tbody>
 					</template>
 				</MasterEntityTable>
 			</div>
 		</SimpleDialog>
+
+		<MasterHideBtn />
 	</div>
 </template>
