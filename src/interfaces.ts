@@ -8,7 +8,6 @@ export interface CoreStat {
 	proficiencyBonus: number
 	armor: number
 	armorType: string
-
 	strength: number
 	dexterity: number
 	constitution: number
@@ -21,14 +20,9 @@ export interface HeroStat extends CoreStat{
 	maxHit: number
 	currentHit: number
 	tempHit: number
-
-
 	savingThrows: Stat[]
-
 	skills: Skill[]
-
 	passiveWisdom: number
-
 	spellcastingAbility: Stat
 	spellSaveDc: number
 	spellAttackBonus: number

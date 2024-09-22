@@ -10,6 +10,7 @@ interface Unit extends CoreStat {
 	hit: number
 	name: string
 	type: 'npc'
+	note: string
 }
 
 interface Log {
@@ -30,6 +31,7 @@ interface Hero extends HeroStat {
 
 const isLoading = ref(true)
 const heroes = useStorage<Hero[]>('master_heroes', [])
+const bufferTempUnit = useStorage<Unit[]>('master_buffer_temp_unit', [])
 const tempUnit = useStorage<Unit[]>('master_temp_unit', [])
 const currentBattleStep = useStorage<string>('master_battle_step', '')
 const masterBattleLogs = useStorage<Log[]>('master_battle_logs', [])
@@ -198,6 +200,61 @@ function getSkill(hero: Hero, statKey: Stat, skillKey: Skill) {
 
 onKeyStroke('ArrowUp', () => onChangeCurrentBattleStep(-1))
 onKeyStroke('ArrowDown', () => onChangeCurrentBattleStep(1))
+
+/** > Бестиарии */
+const tempUnitForm = reactive({
+	name: `Временный моб #${bufferTempUnit.value.length + 1}`,
+	note: '',
+	hit: 20,
+	type: 'npc',
+	initiative: 0,
+	speed: 0,
+	proficiencyBonus: 0,
+	armor: 0,
+	armorType: '',
+	strength: 0,
+	dexterity: 0,
+	constitution: 0,
+	intelligence: 0,
+	wisdom: 0,
+	charisma: 0,
+})
+
+function addToBuffetTempUnit() {
+	bufferTempUnit.value.push({
+		...tempUnitForm,
+		id: crypto.randomUUID(),
+		type: 'npc',
+	})
+
+	tempUnitForm.name = `Временный моб #${bufferTempUnit.value.length + 1}`
+	tempUnitForm.note = ''
+	tempUnitForm.hit = 20
+	tempUnitForm.type = 'npc'
+	tempUnitForm.initiative = 0
+	tempUnitForm.speed = 0
+	tempUnitForm.proficiencyBonus = 0
+	tempUnitForm.armor = 0
+	tempUnitForm.armorType = ''
+	tempUnitForm.strength = 0
+	tempUnitForm.dexterity = 0
+	tempUnitForm.constitution = 0
+	tempUnitForm.intelligence = 0
+	tempUnitForm.wisdom = 0
+	tempUnitForm.charisma = 0
+}
+
+function handleDuplicateBufferTempUnit(unit: Unit) {
+	bufferTempUnit.value.push({
+		...unit,
+		id: crypto.randomUUID(),
+	})
+}
+
+function handleRemoveBufferTempUnit(id: string) {
+	bufferTempUnit.value = bufferTempUnit.value.filter((unit) => unit.id !== id)
+}
+/** < Бестиарии */
 
 onMounted(async() => {
 	const records = await pb.collection('stat').getList(1, 5, { expand: 'hero' }) as { items: Hero[] }
@@ -532,7 +589,7 @@ onMounted(async() => {
 						class="btn text-[12px]"
 						@click="simpleDialogRef?.open()"
 					>
-						Бестиарий
+						Бестиарии
 					</button>
 
 					<button
@@ -584,21 +641,275 @@ onMounted(async() => {
 
 		<SimpleDialog
 			ref="simpleDialogRef"
-			title="Бестиарий"
+			title="Бестиарии"
 		>
-			<div class="w-[1000px] flex flex-col gap-2">
-				<header>
+			<div class="w-[1200px] flex flex-col gap-2">
+				<details>
+					<summary>
+						Быстрое добавление моба
+					</summary>
+					<form
+						class="mt-2 flex flex-col gap-2"
+						@submit.prevent="addToBuffetTempUnit"
+					>
+						<MasterEntityTable full>
+							<template #tbody>
+								<tr>
+									<td colspan="3">
+										<textarea
+											v-model="tempUnitForm.name"
+											class="w-full bg-transparent"
+										/>
+									</td>
+									<td>
+										<input
+											v-model="tempUnitForm.hit"
+											type="number"
+											class="w-[40px] bg-transparent"
+										/>
+									</td>
+									<td>
+										<input
+											v-model="tempUnitForm.initiative"
+											type="number"
+											class="w-[40px] bg-transparent"
+										/>
+									</td>
+									<td>
+										<input
+											v-model="tempUnitForm.speed"
+											type="number"
+											class="w-[40px] bg-transparent"
+										/>
+									</td>
+									<td>
+										<input
+											v-model="tempUnitForm.proficiencyBonus"
+											type="number"
+											class="w-[40px] bg-transparent"
+										/>
+									</td>
+									<td>
+										<input
+											v-model="tempUnitForm.armor"
+											type="number"
+											class="w-[40px] bg-transparent"
+										/>
+									</td>
+									<td>
+										<input
+											v-model="tempUnitForm.armorType"
+											type="text"
+											class="bg-transparent"
+										/>
+									</td>
+									<td>
+										<input
+											v-model="tempUnitForm.strength"
+											type="number"
+											class="w-[40px] bg-transparent"
+										/>
+									</td>
+									<td>
+										<input
+											v-model="tempUnitForm.dexterity"
+											type="number"
+											class="w-[40px] bg-transparent"
+										/>
+									</td>
+									<td>
+										<input
+											v-model="tempUnitForm.constitution"
+											type="number"
+											class="w-[40px] bg-transparent"
+										/>
+									</td>
+									<td>
+										<input
+											v-model="tempUnitForm.intelligence"
+											type="number"
+											class="w-[40px] bg-transparent"
+										/>
+									</td>
+									<td>
+										<input
+											v-model="tempUnitForm.wisdom"
+											type="number"
+											class="w-[40px] bg-transparent"
+										/>
+									</td>
+									<td>
+										<input
+											v-model="tempUnitForm.charisma"
+											type="number"
+											class="w-[40px] bg-transparent"
+										/>
+									</td>
+									<td>
+										<span>note:</span>
+										<textarea
+											v-model="tempUnitForm.note"
+											class="bg-transparent"
+										/>
+									</td>
+								</tr>
+							</template>
+						</MasterEntityTable>
+
+						<button
+							type="submit"
+							class="self-end btn text-[12px]"
+						>
+							Добавить моба в список
+						</button>
+					</form>
+				</details>
+				<div class="mt-2 flex flex-col gap-2 border-t pt-2">
+					<h2>Список</h2>
+					<MasterEntityTable
+						full
+						:empty="bufferTempUnit.length === 0"
+					>
+						<template #tbody>
+							<tr
+								v-for="entity in bufferTempUnit"
+								:key="entity.id"
+							>
+								<td colspan="2">
+									{{ entity.note ? `note: ${entity.note}` : '' }}
+								</td>
+								<td
+									:title="entity.id"
+								>
+									<input
+										v-model="entity.name"
+										type="text"
+										class="bg-transparent"
+									/>
+								</td>
+								<td>
+									<input
+										v-model="entity.hit"
+										type="number"
+										class="w-[40px] bg-transparent"
+									/>
+								</td>
+								<td>
+									<input
+										type="number"
+										class="w-[25px] bg-transparent"
+										:value="entity.initiative"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.initiative = Number(ev.value)}"
+									/>
+								</td>
+								<td>
+									<input
+										type="number"
+										class="w-[25px] bg-transparent"
+										:value="entity.speed"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.speed = Number(ev.value)}"
+									/>
+								</td>
+								<td>
+									<input
+										type="number"
+										class="w-[25px] bg-transparent"
+										:value="entity.proficiencyBonus"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.proficiencyBonus = Number(ev.value)}"
+									/>
+								</td>
+								<td>
+									<input
+										type="number"
+										class="w-[25px] bg-transparent"
+										:value="entity.armor"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.armor = Number(ev.value)}"
+									/>
+								</td>
+								<td>
+									<input
+										type="number"
+										class="w-[110px] bg-transparent"
+										:value="entity.armorType"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.armorType = ev.value}"
+									/>
+								</td>
+								<td>
+									<input
+										type="number"
+										class="w-[25px] bg-transparent"
+										:value="entity.strength"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.strength = Number(ev.value)}"
+									/>
+								</td>
+								<td>
+									<input
+										type="number"
+										class="w-[25px] bg-transparent"
+										:value="entity.dexterity"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.dexterity = Number(ev.value)}"
+									/>
+								</td>
+								<td>
+									<input
+										type="number"
+										class="w-[25px] bg-transparent"
+										:value="entity.constitution"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.constitution = Number(ev.value)}"
+									/>
+								</td>
+								<td>
+									<input
+										type="number"
+										class="w-[25px] bg-transparent"
+										:value="entity.intelligence"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.intelligence = Number(ev.value)}"
+									/>
+								</td>
+								<td>
+									<input
+										type="number"
+										class="w-[25px] bg-transparent"
+										:value="entity.wisdom"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.wisdom = Number(ev.value)}"
+									/>
+								</td>
+								<td>
+									<input
+										type="number"
+										class="w-[25px] bg-transparent"
+										:value="entity.charisma"
+										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.charisma = Number(ev.value)}"
+									/>
+								</td>
+								<td>
+									<div class="flex gap-4">
+										<button @click="handleDuplicateBufferTempUnit(entity)">
+											D
+										</button>
+										<button @click="handleRemoveBufferTempUnit(entity.id)">
+											R
+										</button>
+									</div>
+								</td>
+							</tr>
+						</template>
+					</MasterEntityTable>
+				</div>
+				<header class="flex flex-wrap justify-between gap-2">
+					<div class="flex gap-2">
+						<button class="btn text-[12px]">
+							Merge json
+						</button>
+						<button class="btn text-[12px]">
+							Export buffer
+						</button>
+					</div>
+
 					<button class="btn text-[12px]">
-						ff
+						Добавить в бой
 					</button>
 				</header>
-				<MasterEntityTable
-					full
-					empty
-				>
-					<template #tbody>
-					</template>
-				</MasterEntityTable>
 			</div>
 		</SimpleDialog>
 
