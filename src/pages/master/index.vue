@@ -227,7 +227,7 @@ function addToBuffetTempUnit() {
 		type: 'npc',
 	})
 
-	tempUnitForm.name = `Временный моб #${bufferTempUnit.value.length + 1}`
+	tempUnitForm.name = 'Временный моб'
 	tempUnitForm.note = ''
 	tempUnitForm.hit = 20
 	tempUnitForm.type = 'npc'
