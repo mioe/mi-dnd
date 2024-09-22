@@ -165,7 +165,7 @@ function handleDuplicateTempUnit(unit: Unit) {
 	tempUnit.value.push({
 		...unit,
 		id: getUUID(),
-		name: `${unit.name.split('#')[0].trim()} #${tempUnit.value.filter(u => u.name.split('#')[0].trim().includes(unit.name.split('#')[0].trim())).length}`,
+		name: `${unit.name.split('#')[0].trim()} #${tempUnit.value.filter(u => u.name.split('#')[0].trim().includes(unit.name.split('#')[0].trim())).length + 1}`,
 	})
 }
 
@@ -203,7 +203,7 @@ onKeyStroke('ArrowDown', () => onChangeCurrentBattleStep(1))
 
 /** > Бестиарии */
 const tempUnitForm = reactive({
-	name: `Временный моб #${bufferTempUnit.value.length + 1}`,
+	name: 'Временный моб',
 	note: '',
 	hit: 20,
 	type: 'npc',
@@ -303,9 +303,10 @@ const checkedIdsBufferTempUnit = ref<string[]>([])
 
 function handleAddTempUnitsToBattle() {
 	const selectedUnits = bufferTempUnit.value.filter(unit => checkedIdsBufferTempUnit.value.includes(unit.id))
-	const uniqUnits = selectedUnits.map(unit => ({ ...unit, id: getUUID() }))
+	const uniqUnits = selectedUnits.map(unit => ({ ...unit, id: getUUID(), name: `${unit.name} #1` }))
 	tempUnit.value = [...tempUnit.value, ...uniqUnits]
 	checkedIdsBufferTempUnit.value = []
+	simpleDialogRef.value?.close()
 }
 
 /** < Бестиарии */
@@ -535,7 +536,7 @@ onMounted(async() => {
 								</td>
 								<td>
 									<input
-										type="number"
+										type="text"
 										class="w-[110px] bg-transparent"
 										:value="entity.armorType"
 										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.armorType = ev.value}"
@@ -918,7 +919,7 @@ onMounted(async() => {
 								</td>
 								<td>
 									<input
-										type="number"
+										type="text"
 										class="w-[110px] bg-transparent"
 										:value="entity.armorType"
 										@blur="($event) => {const ev = $event.target as HTMLInputElement; entity.armorType = ev.value}"
