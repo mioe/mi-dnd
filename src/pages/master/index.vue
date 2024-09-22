@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { HeroStat, CoreStat, Stat, Skill } from '~/interfaces'
+import SimpleDialog from '~/components/_common/SimpleDialog.vue'
+import MasterEntityTable from '~/components/Master/MasterEntityTable.vue'
 const pb = usePB()
 
 interface Unit extends CoreStat {
@@ -30,6 +32,8 @@ const heroes = useStorage<Hero[]>('master_heroes', [])
 const tempUnit = useStorage<Unit[]>('master_temp_unit', [])
 const currentBattleStep = useStorage<string>('master_battle_step', '')
 const masterBattleLogs = useStorage<Log[]>('master_battle_logs', [])
+
+const simpleDialogRef = shallowRef<InstanceType<typeof SimpleDialog> | undefined>()
 
 const allUnitAndHero = computed<(Hero | Unit)[]>(() => {
 	return [...heroes.value, ...tempUnit.value].sort((a, b) => b.initiative - a.initiative)
@@ -66,23 +70,24 @@ pb.collection('stat').subscribe('*', function(e) {
 }, { expand: 'hero' })
 
 function addTempUnit() {
-	tempUnit.value.push({
-		id: crypto.randomUUID(),
-		name: `Временный моб #${tempUnit.value.length + 1}`,
-		hit: 20,
-		type: 'npc',
-		initiative: 0,
-		speed: 0,
-		proficiencyBonus: 0,
-		armor: 0,
-		armorType: '',
-		strength: 0,
-		dexterity: 0,
-		constitution: 0,
-		intelligence: 0,
-		wisdom: 0,
-		charisma: 0,
-	})
+	simpleDialogRef.value?.open()
+	// tempUnit.value.push({
+	// 	id: crypto.randomUUID(),
+	// 	name: `Временный моб #${tempUnit.value.length + 1}`,
+	// 	hit: 20,
+	// 	type: 'npc',
+	// 	initiative: 0,
+	// 	speed: 0,
+	// 	proficiencyBonus: 0,
+	// 	armor: 0,
+	// 	armorType: '',
+	// 	strength: 0,
+	// 	dexterity: 0,
+	// 	constitution: 0,
+	// 	intelligence: 0,
+	// 	wisdom: 0,
+	// 	charisma: 0,
+	// })
 }
 
 const masterBattleLogsRef = shallowRef()
@@ -330,94 +335,8 @@ onMounted(async() => {
 
 			<section class="flex flex-col gap-2">
 				<h2>Режим боя</h2>
-				<table class="default-master-table">
-					<thead>
-						<tr>
-							<th class="w-[18px]"></th>
-							<th class="w-[24px]">
-								<span class="px-[4px]">
-									#
-								</span>
-							</th>
-							<th>
-								<span class="px-[4px]">
-									Имя
-								</span>
-							</th>
-							<th class="w-[120px]">
-								<span class="px-[4px]">
-									Хиты
-								</span>
-							</th>
-							<th class="w-[34px]">
-								<div
-									class="i-mi:black-hand-shield h-[24px] w-full bg-black"
-									data-tip="Инициатива"
-								/>
-							</th>
-							<th class="w-[34px]">
-								<div
-									class="i-mi:wingfoot h-[24px] w-full bg-black"
-									data-tip="Скорость"
-								/>
-							</th>
-							<th class="w-[34px]">
-								<div
-									class="i-mi:muscle-fat h-[24px] w-full bg-black"
-									data-tip="Бонус мастерства"
-								/>
-							</th>
-							<th class="w-[34px]">
-								<div
-									class="i-mi:barbute h-[24px] w-full bg-black"
-									data-tip="Класс доспехов"
-								/>
-							</th>
-							<th class="w-[120px]">
-								<span class="px-[4px]">
-									Тип доспехов
-								</span>
-							</th>
-							<th class="w-[34px]">
-								<div
-									class="i-mi:weight-lifting-up h-[24px] w-full bg-black"
-									data-tip="Сила"
-								/>
-							</th>
-							<th class="w-[34px]">
-								<div
-									class="i-mi:bullseye h-[24px] w-full bg-black"
-									data-tip="Ловкость"
-								/>
-							</th>
-							<th class="w-[34px]">
-								<div
-									class="i-mi:fat h-[24px] w-full bg-black"
-									data-tip="Телосложение"
-								/>
-							</th>
-							<th class="w-[34px]">
-								<div
-									class="i-mi:magick-trick h-[24px] w-full bg-black"
-									data-tip="Интеллект"
-								/>
-							</th>
-							<th class="w-[34px]">
-								<div
-									class="i-mi:wisdom h-[24px] w-full bg-black"
-									data-tip="Мудрость"
-								/>
-							</th>
-							<th class="w-[34px]">
-								<div
-									class="i-mi:rose h-[24px] w-full bg-black"
-									data-tip="Харизма"
-								/>
-							</th>
-							<th class="w-[40px]"></th>
-						</tr>
-					</thead>
-					<tbody>
+				<MasterEntityTable>
+					<template #tbody>
 						<tr
 							v-for="(entity, entityIdx) in allUnitAndHero"
 							:key="entity.id"
@@ -558,7 +477,7 @@ onMounted(async() => {
 										<span>/</span>
 										<span
 											data-tip="Максимум хитов"
-											class="text-green-600 font-bold"
+											class="select-none text-green-600 font-bold"
 										>{{ entity.maxHit }}</span>
 									</div>
 								</td>
@@ -606,14 +525,14 @@ onMounted(async() => {
 								<td></td>
 							</template>
 						</tr>
-					</tbody>
-				</table>
+					</template>
+				</MasterEntityTable>
 				<footer class="flex flex-wrap gap-2">
 					<button
 						class="btn text-[12px]"
-						@click="addTempUnit"
+						@click="simpleDialogRef?.open()"
 					>
-						Добавить моба
+						Бестиарий
 					</button>
 
 					<button
@@ -662,5 +581,14 @@ onMounted(async() => {
 		<p v-else>
 			isLoading...
 		</p>
+
+		<SimpleDialog ref="simpleDialogRef">
+			<div class="w-[1000px] flex">
+				<MasterEntityTable full>
+					<template #tbody>
+					</template>
+				</MasterEntityTable>
+			</div>
+		</SimpleDialog>
 	</div>
 </template>
