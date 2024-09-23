@@ -17,6 +17,9 @@ importers:
       '@vueuse/core':
         specifier: ^11.0.3
         version: 11.0.3(vue@3.5.3(typescript@5.5.4))
+      howler:
+        specifier: ^2.2.4
+        version: 2.2.4
       pinia:
         specifier: ^2.2.2
         version: 2.2.2(typescript@5.5.4)(vue@3.5.3(typescript@5.5.4))
@@ -32,6 +35,9 @@ importers:
       vue-router:
         specifier: ^4.4.3
         version: 4.4.3(vue@3.5.3(typescript@5.5.4))
+      vue3-toastify:
+        specifier: ^0.2.3
+        version: 0.2.3(vue@3.5.3(typescript@5.5.4))
     devDependencies:
       '@iconify/utils':
         specifier: ^2.1.32
@@ -42,6 +48,9 @@ importers:
       '@stylistic/eslint-plugin':
         specifier: ^2.7.2
         version: 2.7.2(eslint@9.9.1(jiti@1.21.6))(typescript@5.5.4)
+      '@types/howler':
+        specifier: ^2.2.11
+        version: 2.2.11
       '@types/node':
         specifier: ^22.5.4
         version: 22.5.4
@@ -723,6 +732,9 @@ packages:
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
 
+  '@types/howler@2.2.11':
+    resolution: {integrity: sha512-7aBoUL6RbSIrqKnpEgfa1wSNUBK06mn08siP2QI0zYk7MXfEJAaORc4tohamQYqCqVESoDyRWSdQn2BOKWj2Qw==}
+
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
@@ -1342,6 +1354,9 @@ packages:
   hookable@5.5.3:
     resolution: {integrity: sha512-Yc+BQe8SvoXH1643Qez1zqLRmbA5rCL+sSmk6TVos0LWVfNIB7PGncdlId77WzLGSIB5KaWgTaNTs2lNVEI6VQ==}
 
+  howler@2.2.4:
+    resolution: {integrity: sha512-iARIBPgcQrwtEr+tALF+rapJ8qSc+Set2GJQl7xT1MQzWaVkFebdJhR3alVlSiUf5U7nAANKuj3aWpwerocD5w==}
+
   ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
     engines: {node: '>= 4'}
@@ -1869,6 +1884,15 @@ packages:
     hasBin: true
     peerDependencies:
       typescript: '>=5.0.0'
+
+  vue3-toastify@0.2.3:
+    resolution: {integrity: sha512-Gsv/wWFYsAzhXFE+JCoL7KAUYvzl9AaGPykkDtT073RWiz1vqtdDFcHENU26ga0tbY42Q51yJr4en/ymQD0OGg==}
+    engines: {node: '>=20', npm: '>=9.0.0'}
+    peerDependencies:
+      vue: '>=3.2.0'
+    peerDependenciesMeta:
+      vue:
+        optional: true
 
   vue@3.5.3:
     resolution: {integrity: sha512-xvRbd0HpuLovYbOHXRHlSBsSvmUJbo0pzbkKTApWnQGf3/cu5Z39mQeA5cZdLRVIoNf3zI6MSoOgHUT5i2jO+Q==}
@@ -2473,6 +2497,8 @@ snapshots:
       '@types/json-schema': 7.0.15
 
   '@types/estree@1.0.5': {}
+
+  '@types/howler@2.2.11': {}
 
   '@types/json-schema@7.0.15': {}
 
@@ -3296,6 +3322,8 @@ snapshots:
 
   hookable@5.5.3: {}
 
+  howler@2.2.4: {}
+
   ignore@5.3.2: {}
 
   import-fresh@3.3.0:
@@ -3822,6 +3850,10 @@ snapshots:
       '@vue/language-core': 2.1.6(typescript@5.5.4)
       semver: 7.6.3
       typescript: 5.5.4
+
+  vue3-toastify@0.2.3(vue@3.5.3(typescript@5.5.4)):
+    optionalDependencies:
+      vue: 3.5.3(typescript@5.5.4)
 
   vue@3.5.3(typescript@5.5.4):
     dependencies:
