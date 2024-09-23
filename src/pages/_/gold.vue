@@ -127,7 +127,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-	<div class="relative w-svw flex flex-1 overflow-hidden">
+	<div class="relative w-svw flex flex-1 select-none overflow-hidden">
 		<DashSnapParent v-if="!isLoading">
 			<DashSnapChild>
 				<header class="w-full flex flex-col items-center justify-center gap-4">

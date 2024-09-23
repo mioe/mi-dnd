@@ -30,7 +30,9 @@ interface Hero extends HeroStat {
 }
 
 const isLoading = ref(true)
-const heroes = useStorage<Hero[]>('master_heroes', [])
+
+const bufferHeroes = useStorage<Hero[]>('master_buffer_heroes', [])
+const selectedHeroesIds = useStorage<string[]>('master_selected_heroes_ids', [])
 const bufferTempUnit = useStorage<Unit[]>('master_buffer_temp_unit', [])
 const tempUnit = useStorage<Unit[]>('master_temp_unit', [])
 const currentBattleStep = useStorage<string>('master_battle_step', '')
@@ -41,6 +43,9 @@ const getUUID = () => '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, c
 )
 
 const simpleDialogRef = shallowRef<InstanceType<typeof SimpleDialog> | undefined>()
+const heroesDialogRef = shallowRef<InstanceType<typeof SimpleDialog> | undefined>()
+
+const heroes = computed(() => bufferHeroes.value.filter(hero => selectedHeroesIds.value.includes(hero.id)))
 
 const allUnitAndHero = computed<(Hero | Unit)[]>(() => {
 	return [...heroes.value, ...tempUnit.value].sort((a, b) => b.initiative - a.initiative)
@@ -50,7 +55,7 @@ pb.collection('stat').subscribe('*', function(e) {
 	console.log(e.action)
 	console.log(e.record)
 	if (e.action === 'update') {
-		heroes.value.forEach((el: any) => {
+		bufferHeroes.value.forEach((el: any) => {
 			if (el.id === e.record.id) {
 				const author = e.record.expand?.hero.name
 				if (el.currentHit !== e.record.currentHit) {
@@ -309,12 +314,16 @@ function handleAddTempUnitsToBattle() {
 	simpleDialogRef.value?.close()
 }
 
+function handleAddSelectedHeroesToBattle() {
+	heroesDialogRef.value?.close()
+}
+
 /** < Бестиарии */
 
 onMounted(async() => {
 	const records = await pb.collection('stat')
 		.getList(1, 5, { expand: 'hero' }) as { items: Hero[] }
-	heroes.value = records.items
+	bufferHeroes.value = records.items
 	isLoading.value = false
 })
 
@@ -676,6 +685,13 @@ onUnmounted(() => {
 
 					<button
 						class="btn text-[12px]"
+						@click="heroesDialogRef?.open()"
+					>
+						Персонажи
+					</button>
+
+					<button
+						class="btn text-[12px]"
 						@click="initBattle"
 					>
 						Начать бой
@@ -1015,6 +1031,58 @@ onUnmounted(() => {
 						Добавить в бой
 					</button>
 				</header>
+			</div>
+		</SimpleDialog>
+
+		<SimpleDialog
+			ref="heroesDialogRef"
+			title="Персонажи"
+		>
+			<div class="w-[1200px] flex flex-col gap-2">
+				<h2>Список</h2>
+				<MasterEntityTable
+					full
+					:empty="bufferHeroes.length === 0"
+				>
+					<template #tbody>
+						<tr
+							v-for="entity in bufferHeroes"
+							:key="entity.id"
+						>
+							<td>
+								<input
+									v-model="selectedHeroesIds"
+									type="checkbox"
+									:value="entity.id"
+								/>
+							</td>
+							<td></td>
+							<td :title="entity.id">
+								{{ entity.expand.hero.name }}
+							</td>
+							<td>{{ entity.maxHit }}</td>
+							<td>{{ entity.initiative }}</td>
+							<td>{{ entity.speed }}</td>
+							<td>{{ entity.proficiencyBonus }}</td>
+							<td>{{ entity.armor }}</td>
+							<td>{{ entity.armorType }}</td>
+							<td>{{ entity.strength }}</td>
+							<td>{{ entity.dexterity }}</td>
+							<td>{{ entity.constitution }}</td>
+							<td>{{ entity.intelligence }}</td>
+							<td>{{ entity.wisdom }}</td>
+							<td>{{ entity.charisma }}</td>
+							<td></td>
+						</tr>
+					</template>
+				</MasterEntityTable>
+
+				<button
+					class="self-end btn text-[12px]"
+					@click="handleAddSelectedHeroesToBattle"
+				>
+					Добавить в бой
+				</button>
 			</div>
 		</SimpleDialog>
 

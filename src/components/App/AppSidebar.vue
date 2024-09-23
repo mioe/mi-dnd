@@ -5,6 +5,8 @@ const masterStore = useMasterStore()
 const { signIn, logout } = appStore
 
 const isAuthorized = computed(() => !!appStore.currentUser)
+const haveHero = computed(() => appStore.currentHero.id)
+
 watch(isAuthorized, val => {
 	console.log('🦕 isAuthorized change:', val)
 	if (val) {
@@ -89,12 +91,14 @@ const isOpen = ref(false)
 				<RouterLink to="/_">
 					{{ $t('page._.index') }}
 				</RouterLink>
-				<RouterLink to="/_/battle">
-					{{ $t('page._.battle') }}
-				</RouterLink>
-				<RouterLink to="/_/gold">
-					{{ $t('page._.gold') }}
-				</RouterLink>
+				<template v-if="haveHero">
+					<RouterLink to="/_/battle">
+						{{ $t('page._.battle') }}
+					</RouterLink>
+					<RouterLink to="/_/gold">
+						{{ $t('page._.gold') }}
+					</RouterLink>
+				</template>
 			</nav>
 
 			<footer
