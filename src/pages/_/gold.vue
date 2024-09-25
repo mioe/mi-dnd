@@ -8,6 +8,8 @@ import DashPiecesAvatar from '~/components/Dash/DashPiecesAvatar.vue'
 import DashSnapParent from '~/components/Dash/DashSnapParent.vue'
 import DashSnapChild from '~/components/Dash/DashSnapChild.vue'
 import DashProgress from '~/components/Dash/DashProgress.vue'
+import DashPiecesPickerSmall from '~/components/Dash/DashPiecesPickerSmall.vue'
+import DashPiecesDiff from '~/components/Dash/DashPiecesDiff.vue'
 
 const appStore = useAppStore()
 const pb = usePB()
@@ -135,34 +137,65 @@ onUnmounted(() => {
 	<div class="relative w-svw flex flex-1 select-none overflow-hidden">
 		<DashSnapParent v-if="!isLoading">
 			<DashSnapChild>
-				<header class="w-full flex flex-col items-center justify-center gap-4">
-					<DashPieces
-						piece="platinum"
-						:count="pieces.platinum"
-						@submit="current.piece = 'platinum'"
-					/>
-					<DashPieces
-						piece="gold"
-						:count="pieces.gold"
-						@submit="current.piece = 'gold'"
-					/>
-					<DashPieces
-						piece="electrum"
-						:count="pieces.electrum"
-						@submit="current.piece = 'electrum'"
-					/>
-					<DashPieces
-						piece="silver"
-						:count="pieces.silver"
-						@submit="current.piece = 'silver'"
-					/>
-					<DashPieces
-						piece="copper"
-						:count="pieces.copper"
-						@submit="current.piece = 'copper'"
-					/>
+				<header class="w-[330px] flex flex-col items-center justify-center gap-4">
+					<div class="w-full flex items-center justify-between">
+						<DashPieces
+							piece="platinum"
+							:count="pieces.platinum"
+							@submit="current.piece = 'platinum'"
+						/>
+						<DashPiecesDiff
+							:current-piece="current.piece"
+							diff-piece="platinum"
+						/>
+					</div>
+					<div class="w-full flex items-center justify-between">
+						<DashPieces
+							piece="gold"
+							:count="pieces.gold"
+							@submit="current.piece = 'gold'"
+						/>
+						<DashPiecesDiff
+							:current-piece="current.piece"
+							diff-piece="gold"
+						/>
+					</div>
+					<div class="w-full flex items-center justify-between">
+						<DashPieces
+							piece="electrum"
+							:count="pieces.electrum"
+							@submit="current.piece = 'electrum'"
+						/>
+						<DashPiecesDiff
+							:current-piece="current.piece"
+							diff-piece="electrum"
+						/>
+					</div>
+					<div class="w-full flex items-center justify-between">
+						<DashPieces
+							piece="silver"
+							:count="pieces.silver"
+							@submit="current.piece = 'silver'"
+						/>
+						<DashPiecesDiff
+							:current-piece="current.piece"
+							diff-piece="silver"
+						/>
+					</div>
+					<div class="w-full flex items-center justify-between">
+						<DashPieces
+							piece="copper"
+							:count="pieces.copper"
+							@submit="current.piece = 'copper'"
+						/>
+						<DashPiecesDiff
+							:current-piece="current.piece"
+							diff-piece="copper"
+						/>
+					</div>
 				</header>
-				<footer class="relative mb-4 mt-auto">
+				<footer class="mb-4 mt-auto flex flex-col gap-4">
+					<DashPiecesPickerSmall @submit="current.piece = $event" />
 					<Transition>
 						<div
 							v-if="btnCreditDebitSubmitPressed"
@@ -171,15 +204,9 @@ onUnmounted(() => {
 							<DashProgress label="1 sec" />
 						</div>
 					</Transition>
-					<div class="w-[280px] flex items-center gap-2 border rounded-[30px] px-[8px] py-[6px]">
-						<button
-							ref="btnCreditDebitSubmitRef"
-							class="rounded-full"
-						>
-							<DashPiecesAvatar :piece="current.piece" />
-						</button>
+					<div class="w-[300px] flex items-center justify-between gap-2 border rounded-[30px] py-[6px] pl-[16px] pr-[8px]">
 						<div>
-							<h2 class="text-[14px]">
+							<h2 class="text-[12px]">
 								Credit / Debit:
 							</h2>
 							<input
@@ -189,6 +216,12 @@ onUnmounted(() => {
 								class="w-[180px] text-[18px] font-bold"
 							/>
 						</div>
+						<button
+							ref="btnCreditDebitSubmitRef"
+							class="rounded-full"
+						>
+							<DashPiecesAvatar :piece="current.piece" />
+						</button>
 					</div>
 				</footer>
 			</DashSnapChild>
@@ -196,65 +229,10 @@ onUnmounted(() => {
 				<header>
 					# todo нужны больше персонажей
 				</header>
-				<footer class="mb-4 mt-auto flex flex-col gap-2">
-					<div class="flex justify-between">
-						<button
-							class="border rounded-full p-2"
-							@click="current.piece = 'platinum'"
-						>
-							<DashPiecesAvatar
-								piece="platinum"
-								small
-							/>
-							<span class="text-[12px]">{{ $t('platinum.short') }}</span>
-						</button>
+				<footer class="mb-4 mt-auto flex flex-col gap-4">
+					<DashPiecesPickerSmall @submit="current.piece = $event" />
 
-						<button
-							class="border rounded-full p-2"
-							@click="current.piece = 'gold'"
-						>
-							<DashPiecesAvatar
-								piece="gold"
-								small
-							/>
-							<span class="text-[12px]">{{ $t('gold.short') }}</span>
-						</button>
-
-						<button
-							class="border rounded-full p-2"
-							@click="current.piece = 'electrum'"
-						>
-							<DashPiecesAvatar
-								piece="electrum"
-								small
-							/>
-							<span class="text-[12px]">{{ $t('electrum.short') }}</span>
-						</button>
-
-						<button
-							class="border rounded-full p-2"
-							@click="current.piece = 'silver'"
-						>
-							<DashPiecesAvatar
-								piece="silver"
-								small
-							/>
-							<span class="text-[12px]">{{ $t('silver.short') }}</span>
-						</button>
-
-						<button
-							class="border rounded-full p-2"
-							@click="current.piece = 'copper'"
-						>
-							<DashPiecesAvatar
-								piece="copper"
-								small
-							/>
-							<span class="text-[12px]">{{ $t('copper.short') }}</span>
-						</button>
-					</div>
-
-					<div class="w-[280px] flex items-center gap-2 border rounded-[30px] px-[8px] py-[6px]">
+					<div class="w-[300px] flex items-center gap-2 border rounded-[30px] px-[8px] py-[6px]">
 						<button
 							ref="btnSplitSubmitRef"
 							class="rounded-full"
