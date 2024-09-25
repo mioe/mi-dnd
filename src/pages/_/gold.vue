@@ -7,9 +7,9 @@ import DashPieces from '~/components/Dash/DashPieces.vue'
 import DashPiecesAvatar from '~/components/Dash/DashPiecesAvatar.vue'
 import DashSnapParent from '~/components/Dash/DashSnapParent.vue'
 import DashSnapChild from '~/components/Dash/DashSnapChild.vue'
-import DashProgress from '~/components/Dash/DashProgress.vue'
 import DashPiecesPickerSmall from '~/components/Dash/DashPiecesPickerSmall.vue'
 import DashPiecesDiff from '~/components/Dash/DashPiecesDiff.vue'
+import DashProgress from '~/components/Dash/DashProgress.vue'
 
 const appStore = useAppStore()
 const pb = usePB()
@@ -196,15 +196,15 @@ onUnmounted(() => {
 				</header>
 				<footer class="mb-4 mt-auto flex flex-col gap-4">
 					<DashPiecesPickerSmall @submit="current.piece = $event" />
-					<Transition>
-						<div
-							v-if="btnCreditDebitSubmitPressed"
-							class="absolute bottom-[calc(100%+16px)] w-full"
-						>
-							<DashProgress label="1 sec" />
-						</div>
-					</Transition>
-					<div class="w-[300px] flex items-center justify-between gap-2 border rounded-[30px] py-[6px] pl-[16px] pr-[8px]">
+					<div class="relative w-[300px] flex items-center justify-between gap-2 border rounded-[30px] py-[6px] pl-[16px] pr-[8px]">
+						<Transition>
+							<div
+								v-if="btnCreditDebitSubmitPressed"
+								class="absolute bottom-[calc(100%+16px)] left-0 w-full"
+							>
+								<DashProgress label="1 sec" />
+							</div>
+						</Transition>
 						<div>
 							<h2 class="text-[12px]">
 								Credit / Debit:
@@ -213,7 +213,7 @@ onUnmounted(() => {
 								ref="inputCreditDebitRef"
 								v-model="current.count"
 								type="number"
-								class="w-[180px] text-[18px] font-bold"
+								class="h-[28px] w-[180px] text-[18px] font-bold"
 							/>
 						</div>
 						<button
