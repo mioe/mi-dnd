@@ -16,18 +16,16 @@ const getPieceTitle = computed(() => $t(`${piece}.long`))
 </script>
 
 <template>
-	<div class="w-[280px] flex items-center gap-2 border rounded-[30px] px-[8px] py-[6px]">
-		<button
-			class="rounded-full"
-			@click="$emit('submit')"
-		>
-			<DashPiecesAvatar :piece="piece" />
-		</button>
-		<div>
-			<h2 class="text-[14px]">
+	<button
+		class="w-[230px] flex items-center justify-between gap-2 border rounded-[30px] py-[6px] pl-[18px] pr-[8px]"
+		@click="$emit('submit')"
+	>
+		<div class="text-left">
+			<h2 class="text-[12px]">
 				{{ getPieceTitle }}
 			</h2>
 			<span class="text-[18px] font-bold">{{ count }}</span>
 		</div>
-	</div>
+		<DashPiecesAvatar :piece="piece" />
+	</button>
 </template>

@@ -1,12 +1,14 @@
 <script setup lang="ts">
+import { toast } from 'vue3-toastify'
+import { Howl } from 'howler'
+import type { Piece } from '~/interfaces'
+
 import DashPieces from '~/components/Dash/DashPieces.vue'
 import DashPiecesAvatar from '~/components/Dash/DashPiecesAvatar.vue'
 import DashSnapParent from '~/components/Dash/DashSnapParent.vue'
 import DashSnapChild from '~/components/Dash/DashSnapChild.vue'
 import DashProgress from '~/components/Dash/DashProgress.vue'
-import { toast } from 'vue3-toastify'
-import { Howl } from 'howler'
-import type { Piece } from '~/interfaces'
+
 const appStore = useAppStore()
 const pb = usePB()
 const { t: $t } = useI18n()
@@ -24,10 +26,19 @@ interface Pieces {
 }
 
 const isLoading = ref(true)
-const currentPieceRecordId = ref('')
-const currentPiece = ref<Piece>('copper')
-const currentCount = ref(0)
-const currentSplit = ref(0)
+
+const current = reactive<{
+	myRecordId: string,
+	piece: Piece,
+	count: number,
+	split: number
+}>({
+	myRecordId: '',
+	piece: 'copper',
+	count: 0,
+	split: 0,
+})
+
 const pieces = reactive({
 	platinum: 0,
 	gold: 0,
@@ -41,9 +52,9 @@ const inputCreditDebitRef = shallowRef()
 const { pressed: btnCreditDebitSubmitPressed } = useMousePressed({ target: btnCreditDebitSubmitRef })
 
 async function onLongPressCallbackHookBtnCreditDebitSubmit() {
-	const data = { [currentPiece.value]: pieces[currentPiece.value] + currentCount.value }
-	await pb.collection('gold').update(currentPieceRecordId.value, data)
-	currentCount.value = 0
+	const data = { [current.piece]: pieces[current.piece] + current.count }
+	await pb.collection('gold').update(current.myRecordId, data)
+	current.count = 0
 	btnCreditDebitSubmitPressed.value = false
 	inputCreditDebitRef.value?.blur()
 }
@@ -69,9 +80,9 @@ function notify(text: string) {
 	})
 }
 
-onMounted(async() => {
+async function getGold() {
 	const record = await pb.collection('gold').getFirstListItem(`hero.id = "${appStore.currentHero.id}"`)
-	currentPieceRecordId.value = record.id
+	current.myRecordId = record.id
 	setPieces({
 		pp: record.platinum,
 		gp: record.gold,
@@ -79,50 +90,44 @@ onMounted(async() => {
 		sp: record.silver,
 		cp: record.copper,
 	})
-	pb.collection('gold').subscribe(currentPieceRecordId.value, function(e) {
-		console.log(e.action)
-		console.log(e.record)
-		if (e.action === 'update') {
-			if (pieces.platinum !== e.record.platinum) {
-				const result = e.record.platinum - pieces.platinum
-				const text = `${result > 0 ? `+${result}` : result} ${$t('platinum.short')}`
-				notify(text)
-			}
-			if (pieces.gold !== e.record.gold) {
-				const result = e.record.gold - pieces.gold
-				const text = `${result > 0 ? `+${result}` : result} ${$t('gold.short')}`
-				notify(text)
-			}
-			if (pieces.electrum !== e.record.electrum) {
-				const result = e.record.electrum - pieces.electrum
-				const text = `${result > 0 ? `+${result}` : result} ${$t('electrum.short')}`
-				notify(text)
-			}
-			if (pieces.silver !== e.record.silver) {
-				const result = e.record.silver - pieces.silver
-				const text = `${result > 0 ? `+${result}` : result} ${$t('silver.short')}`
-				notify(text)
-			}
-			if (pieces.copper !== e.record.copper) {
-				const result = e.record.copper - pieces.copper
-				const text = `${result > 0 ? `+${result}` : result} ${$t('copper.short')}`
-				notify(text)
-			}
+}
+
+function onShowGoldChange(p: Piece, record: any) {
+	if (pieces[p] !== record[p]) {
+		const result = record[p] - pieces[p]
+		const text = `${result > 0 ? `+${result}` : result} ${$t(`${p}.short`)}`
+		notify(text)
+	}
+}
+
+function getRealtimeGold() {
+	pb.collection('gold').subscribe(current.myRecordId, ev => {
+		if (ev.action === 'update') {
+			onShowGoldChange('platinum', ev.record)
+			onShowGoldChange('gold', ev.record)
+			onShowGoldChange('electrum', ev.record)
+			onShowGoldChange('silver', ev.record)
+			onShowGoldChange('copper', ev.record)
 
 			setPieces({
-				pp: e.record.platinum,
-				gp: e.record.gold,
-				ep: e.record.electrum,
-				sp: e.record.silver,
-				cp: e.record.copper,
+				pp: ev.record.platinum,
+				gp: ev.record.gold,
+				ep: ev.record.electrum,
+				sp: ev.record.silver,
+				cp: ev.record.copper,
 			})
 		}
 	})
+}
+
+onMounted(async() => {
+	await getGold()
+	getRealtimeGold()
 	isLoading.value = false
 })
 
 onUnmounted(() => {
-	pb.collection('gold').unsubscribe(currentPieceRecordId.value)
+	pb.collection('gold').unsubscribe(current.myRecordId)
 })
 </script>
 
@@ -134,27 +139,27 @@ onUnmounted(() => {
 					<DashPieces
 						piece="platinum"
 						:count="pieces.platinum"
-						@submit="currentPiece = 'platinum'"
+						@submit="current.piece = 'platinum'"
 					/>
 					<DashPieces
 						piece="gold"
 						:count="pieces.gold"
-						@submit="currentPiece = 'gold'"
+						@submit="current.piece = 'gold'"
 					/>
 					<DashPieces
 						piece="electrum"
 						:count="pieces.electrum"
-						@submit="currentPiece = 'electrum'"
+						@submit="current.piece = 'electrum'"
 					/>
 					<DashPieces
 						piece="silver"
 						:count="pieces.silver"
-						@submit="currentPiece = 'silver'"
+						@submit="current.piece = 'silver'"
 					/>
 					<DashPieces
 						piece="copper"
 						:count="pieces.copper"
-						@submit="currentPiece = 'copper'"
+						@submit="current.piece = 'copper'"
 					/>
 				</header>
 				<footer class="relative mb-4 mt-auto">
@@ -171,7 +176,7 @@ onUnmounted(() => {
 							ref="btnCreditDebitSubmitRef"
 							class="rounded-full"
 						>
-							<DashPiecesAvatar :piece="currentPiece" />
+							<DashPiecesAvatar :piece="current.piece" />
 						</button>
 						<div>
 							<h2 class="text-[14px]">
@@ -179,7 +184,7 @@ onUnmounted(() => {
 							</h2>
 							<input
 								ref="inputCreditDebitRef"
-								v-model="currentCount"
+								v-model="current.count"
 								type="number"
 								class="w-[180px] text-[18px] font-bold"
 							/>
@@ -195,7 +200,7 @@ onUnmounted(() => {
 					<div class="flex justify-between">
 						<button
 							class="border rounded-full p-2"
-							@click="currentPiece = 'platinum'"
+							@click="current.piece = 'platinum'"
 						>
 							<DashPiecesAvatar
 								piece="platinum"
@@ -206,7 +211,7 @@ onUnmounted(() => {
 
 						<button
 							class="border rounded-full p-2"
-							@click="currentPiece = 'gold'"
+							@click="current.piece = 'gold'"
 						>
 							<DashPiecesAvatar
 								piece="gold"
@@ -217,7 +222,7 @@ onUnmounted(() => {
 
 						<button
 							class="border rounded-full p-2"
-							@click="currentPiece = 'electrum'"
+							@click="current.piece = 'electrum'"
 						>
 							<DashPiecesAvatar
 								piece="electrum"
@@ -228,7 +233,7 @@ onUnmounted(() => {
 
 						<button
 							class="border rounded-full p-2"
-							@click="currentPiece = 'silver'"
+							@click="current.piece = 'silver'"
 						>
 							<DashPiecesAvatar
 								piece="silver"
@@ -239,7 +244,7 @@ onUnmounted(() => {
 
 						<button
 							class="border rounded-full p-2"
-							@click="currentPiece = 'copper'"
+							@click="current.piece = 'copper'"
 						>
 							<DashPiecesAvatar
 								piece="copper"
@@ -254,14 +259,14 @@ onUnmounted(() => {
 							ref="btnSplitSubmitRef"
 							class="rounded-full"
 						>
-							<DashPiecesAvatar :piece="currentPiece" />
+							<DashPiecesAvatar :piece="current.piece" />
 						</button>
 						<div>
 							<h2 class="text-[14px]">
 								Split:
 							</h2>
 							<input
-								v-model="currentSplit"
+								v-model="current.split"
 								type="number"
 								class="w-[180px] text-[18px] font-bold"
 							/>
