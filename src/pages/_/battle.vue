@@ -1,63 +1,95 @@
 <script setup lang="ts">
+import DragnaBattleScreen from '~/components/Dragna/DragnaBattleScreen.vue'
+import type { HeroStat } from '~/interfaces'
+const pb = usePB()
 const appStore = useAppStore()
-const { getStats, setStat } = appStore
 
 const isLoading = ref(true)
-const currentInitiative = ref(0)
-const currentHit = ref(0)
+
+/** Технические данных */
+const meta = reactive({
+	recordId: '',
+})
+/** Хранилище характеристик персонажа */
+const current = reactive<HeroStat>({
+	initiative: 0,
+	speed: 0,
+	proficiencyBonus: 0,
+	armor: 0,
+	armorType: '',
+	strength: 0,
+	dexterity: 0,
+	constitution: 0,
+	intelligence: 0,
+	wisdom: 0,
+	charisma: 0,
+	maxHit: 0,
+	currentHit: 0,
+	tempHit: 0,
+	savingThrows: [],
+	skills: [],
+	passiveWisdom: 0,
+	spellcastingAbility: 'charisma',
+	spellSaveDc: 0,
+	spellAttackBonus: 0,
+})
+const currentStatKeys = Object.keys(current)
+
+async function getStats() {
+	const record = await pb.collection('stat').getFirstListItem(
+		`hero.id = "${appStore.currentHero?.id}"`,
+	)
+	meta.recordId = record.id
+	current.initiative = record.initiative ?? 0
+}
+
+function getRealtimeStats() {
+	pb.collection('stat').subscribe(meta.recordId, ev => {
+		// console.log(ev.action)
+		// console.log(ev.record)
+		if (ev.action === 'update') {
+			Object.entries(ev.record).forEach(([statKey, statVal]) => {
+				if (currentStatKeys.includes(statKey)) {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-expect-error
+					current[statKey] = statVal
+				}
+			})
+		}
+	})
+}
+
+async function onUpdateStat(statKey: string, statVal: any) {
+	await pb.collection('stat').update(meta.recordId, { [statKey]: statVal })
+}
+
+async function onSubmitStat(statKey: string, statValue: any) {
+	await onUpdateStat(statKey, statValue)
+}
 
 onMounted(async() => {
-	const stats = await getStats()
-	currentInitiative.value = stats?.initiative ?? 0
-	currentHit.value = stats?.currentHit ?? 0
+	await getStats()
+	getRealtimeStats()
 	isLoading.value = false
 })
 
-watchDebounced(
-	currentInitiative,
-	async(val) => {
-		const intVal = val ? Number(val) : 0
-		await setStat('initiative', intVal)
-	},
-	{ debounce: 1000 },
-)
-
-watchDebounced(
-	currentHit,
-	async(val) => {
-		const intVal = val ? Number(val) : 0
-		await setStat('currentHit', intVal)
-	},
-	{ debounce: 1000 },
-)
+onUnmounted(() => {
+	pb.collection('stat').unsubscribe(meta.recordId)
+})
 </script>
 
 <template>
-	<div class="flex p-4">
-		<main
-			v-if="!isLoading"
-			class="flex flex-col gap-4"
-		>
-			<article>
-				<p>{{ $t('stat.initiative') }}:</p>
-				<input
-					v-model="currentInitiative"
-					type="number"
-					class="border rounded px-2 py-1"
-				/>
-			</article>
-
-			<article>
-				<p>{{ $t('stat.currentHit') }}:</p>
-				<input
-					v-model="currentHit"
-					type="number"
-					class="border rounded px-2 py-1"
-				/>
-			</article>
-		</main>
-		<p v-else>
-			isLoading...
-		</p>
-	</div>
+	<main
+		v-if="!isLoading"
+		class="relative w-svw flex flex-1 select-none overflow-hidden"
+	>
+		<DragnaBattleScreen
+			v-if="appStore.currentHero?.id === 'y3zz7mpfqwnr7h2'"
+			:initiative="current.initiative"
+			@submit="onSubmitStat"
+		/>
+	</main>
+	<p v-else>
+		isLoading...
+	</p>
 </template>

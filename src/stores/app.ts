@@ -41,28 +41,6 @@ export const useAppStore = defineStore('app', () => {
 		cleanup()
 	}
 
-	async function getStats() {
-		try {
-			const record = await pb.collection('stat').getFirstListItem(
-				`hero.id = "${currentHero.value.id}"`,
-			)
-			return record
-		} catch (err) {
-			console.error(err)
-		}
-	}
-
-	async function setStat(key: string, val: number | string | boolean){
-		try {
-			const record = await pb.collection('stat').getFirstListItem(
-				`hero.id = "${currentHero.value.id}"`,
-			)
-			await pb.collection('stat').update(record.id, { [key]: val })
-		} catch (err) {
-			console.error(err)
-		}
-	}
-
 	return {
 		currentUser,
 		currentHero,
@@ -71,8 +49,6 @@ export const useAppStore = defineStore('app', () => {
 		signIn,
 		logout,
 		getMyHeroes,
-		getStats,
-		setStat,
 	}
 })
 

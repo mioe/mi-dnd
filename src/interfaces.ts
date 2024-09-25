@@ -18,7 +18,7 @@ export interface CoreStat {
 	charisma: number
 }
 
-export interface HeroStat extends CoreStat{
+export interface HeroStat extends CoreStat {
 	maxHit: number
 	currentHit: number
 	tempHit: number
