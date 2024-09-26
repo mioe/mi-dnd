@@ -45,8 +45,6 @@ async function getStats() {
 
 function getRealtimeStats() {
 	pb.collection('stat').subscribe(meta.recordId, ev => {
-		// console.log(ev.action)
-		// console.log(ev.record)
 		if (ev.action === 'update') {
 			Object.entries(ev.record).forEach(([statKey, statVal]) => {
 				if (currentStatKeys.includes(statKey)) {

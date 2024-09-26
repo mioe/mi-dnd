@@ -5,8 +5,8 @@ import type { Piece } from '~/interfaces'
 
 import DashPieces from '~/components/Dash/DashPieces.vue'
 import DashPiecesAvatar from '~/components/Dash/DashPiecesAvatar.vue'
-import DashSnapParent from '~/components/Dash/DashSnapParent.vue'
-import DashSnapChild from '~/components/Dash/DashSnapChild.vue'
+import SnapParent from '~/components/_common/SnapParent.vue'
+import SnapChild from '~/components/_common/SnapChild.vue'
 import DashPiecesPickerSmall from '~/components/Dash/DashPiecesPickerSmall.vue'
 import DashPiecesDiff from '~/components/Dash/DashPiecesDiff.vue'
 import DashProgress from '~/components/Dash/DashProgress.vue'
@@ -191,8 +191,8 @@ onUnmounted(() => {
 
 <template>
 	<div class="relative w-svw flex flex-1 select-none overflow-hidden">
-		<DashSnapParent v-if="!isLoading">
-			<DashSnapChild>
+		<SnapParent v-if="!isLoading">
+			<SnapChild>
 				<header class="w-[330px] flex flex-col items-center justify-center gap-4">
 					<div class="w-full flex items-center justify-between">
 						<DashPieces
@@ -280,8 +280,8 @@ onUnmounted(() => {
 						</button>
 					</div>
 				</footer>
-			</DashSnapChild>
-			<DashSnapChild>
+			</SnapChild>
+			<SnapChild>
 				<header class="w-[330px] flex flex-col items-center justify-center gap-4">
 					<div class="h-[64px] w-full flex items-center justify-between gap-2 border rounded-[30px] py-[6px] pl-[18px] pr-[8px]">
 						<div class="flex flex-col text-left">
@@ -355,8 +355,8 @@ onUnmounted(() => {
 						</button>
 					</div>
 				</footer>
-			</DashSnapChild>
-		</DashSnapParent>
+			</SnapChild>
+		</SnapParent>
 		<p
 			v-else
 			class="p-4"

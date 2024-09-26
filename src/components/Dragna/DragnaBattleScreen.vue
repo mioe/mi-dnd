@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import DashSnapParent from '~/components/Dash/DashSnapParent.vue'
-import DashSnapChild from '~/components/Dash/DashSnapChild.vue'
+import SnapParent from '~/components/_common/SnapParent.vue'
+import SnapChild from '~/components/_common/SnapChild.vue'
 
 const { initiative } = defineProps<{
 	initiative: number
@@ -25,8 +25,8 @@ function handleDecrement() {
 </script>
 
 <template>
-	<DashSnapParent>
-		<DashSnapChild>
+	<SnapParent>
+		<SnapChild>
 			<header class="w-full flex flex-col items-center justify-center gap-4">
 				<button
 					class="w-[140px] flex items-center gap-2 border border-red-700 rounded-[30px] bg-red px-[6px] py-[4px] text-white"
@@ -82,9 +82,9 @@ function handleDecrement() {
 					</button>
 				</div>
 			</footer>
-		</DashSnapChild>
-		<DashSnapChild>
+		</SnapChild>
+		<SnapChild>
 			2
-		</DashSnapChild>
-	</DashSnapParent>
+		</SnapChild>
+	</SnapParent>
 </template>
