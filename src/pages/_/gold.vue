@@ -29,14 +29,10 @@ interface Pieces {
 
 const isLoading = ref(true)
 
-const current = reactive<{
-	myRecordId: string,
-	piece: Piece,
-	count: number,
-	split: number
-}>({
+const selectedPiece = useStorage<Piece>('gold:selectedPiece', 'copper')
+
+const current = reactive({
 	myRecordId: '',
-	piece: 'copper',
 	count: 0,
 	split: 0,
 })
@@ -75,7 +71,7 @@ const inputCreditDebitRef = shallowRef()
 const { pressed: btnCreditDebitSubmitPressed } = useMousePressed({ target: btnCreditDebitSubmitRef })
 
 async function onLongPressCallbackHookBtnCreditDebitSubmit() {
-	const data = { [current.piece]: pieces[current.piece] + current.count }
+	const data = { [selectedPiece.value]: pieces[selectedPiece.value] + current.count }
 	await pb.collection('gold').update(current.myRecordId, data)
 	current.count = 0
 	btnCreditDebitSubmitPressed.value = false
@@ -158,8 +154,8 @@ const inputSplitRef = shallowRef()
 const { pressed: btnSplitSubmitPressed } = useMousePressed({ target: btnSplitSubmitRef })
 
 async function onLongPressCallbackHookBtnSplitSubmit() {
-	const mySplitData = { [current.piece]: pieces[current.piece] + mySplit.value }
-	const friendlySplitData = { [current.piece]: pieces[current.piece] + friendlySplit.value }
+	const mySplitData = { [selectedPiece.value]: pieces[selectedPiece.value] + mySplit.value }
+	const friendlySplitData = { [selectedPiece.value]: pieces[selectedPiece.value] + friendlySplit.value }
 	const promises = [
 		pb.collection('gold').update(current.myRecordId, mySplitData),
 		...friendly.wallets
@@ -199,10 +195,10 @@ onUnmounted(() => {
 						<DashPieces
 							piece="platinum"
 							:count="pieces.platinum"
-							@submit="current.piece = 'platinum'"
+							@submit="selectedPiece = 'platinum'"
 						/>
 						<DashPiecesDiff
-							:current-piece="current.piece"
+							:current-piece="selectedPiece"
 							diff-piece="platinum"
 						/>
 					</div>
@@ -210,10 +206,10 @@ onUnmounted(() => {
 						<DashPieces
 							piece="gold"
 							:count="pieces.gold"
-							@submit="current.piece = 'gold'"
+							@submit="selectedPiece = 'gold'"
 						/>
 						<DashPiecesDiff
-							:current-piece="current.piece"
+							:current-piece="selectedPiece"
 							diff-piece="gold"
 						/>
 					</div>
@@ -221,10 +217,10 @@ onUnmounted(() => {
 						<DashPieces
 							piece="electrum"
 							:count="pieces.electrum"
-							@submit="current.piece = 'electrum'"
+							@submit="selectedPiece = 'electrum'"
 						/>
 						<DashPiecesDiff
-							:current-piece="current.piece"
+							:current-piece="selectedPiece"
 							diff-piece="electrum"
 						/>
 					</div>
@@ -232,10 +228,10 @@ onUnmounted(() => {
 						<DashPieces
 							piece="silver"
 							:count="pieces.silver"
-							@submit="current.piece = 'silver'"
+							@submit="selectedPiece = 'silver'"
 						/>
 						<DashPiecesDiff
-							:current-piece="current.piece"
+							:current-piece="selectedPiece"
 							diff-piece="silver"
 						/>
 					</div>
@@ -243,16 +239,16 @@ onUnmounted(() => {
 						<DashPieces
 							piece="copper"
 							:count="pieces.copper"
-							@submit="current.piece = 'copper'"
+							@submit="selectedPiece = 'copper'"
 						/>
 						<DashPiecesDiff
-							:current-piece="current.piece"
+							:current-piece="selectedPiece"
 							diff-piece="copper"
 						/>
 					</div>
 				</header>
 				<footer class="mb-4 mt-auto flex flex-col gap-4">
-					<DashPiecesPickerSmall @submit="current.piece = $event" />
+					<DashPiecesPickerSmall @submit="selectedPiece = $event" />
 					<div class="relative w-[300px] flex items-center justify-between gap-2 border rounded-[30px] py-[6px] pl-[16px] pr-[8px]">
 						<Transition>
 							<div
@@ -277,7 +273,7 @@ onUnmounted(() => {
 							ref="btnCreditDebitSubmitRef"
 							class="rounded-full"
 						>
-							<DashPiecesAvatar :piece="current.piece" />
+							<DashPiecesAvatar :piece="selectedPiece" />
 						</button>
 					</div>
 				</footer>
@@ -293,7 +289,7 @@ onUnmounted(() => {
 						</div>
 						<div class="flex items-center gap-2">
 							<span>+{{ mySplit }}</span>
-							<DashPiecesAvatar :piece="current.piece" />
+							<DashPiecesAvatar :piece="selectedPiece" />
 						</div>
 					</div>
 					<h2>{{ $t('friendly') }}:</h2>
@@ -321,12 +317,12 @@ onUnmounted(() => {
 							class="flex items-center gap-2"
 						>
 							<span>+{{ friendlySplit }}</span>
-							<DashPiecesAvatar :piece="current.piece" />
+							<DashPiecesAvatar :piece="selectedPiece" />
 						</div>
 					</label>
 				</header>
 				<footer class="mb-4 mt-auto flex flex-col gap-4">
-					<DashPiecesPickerSmall @submit="current.piece = $event" />
+					<DashPiecesPickerSmall @submit="selectedPiece = $event" />
 
 					<div class="relative w-[300px] flex items-center justify-between gap-2 border rounded-[30px] py-[6px] pl-[16px] pr-[8px]">
 						<Transition>
@@ -352,7 +348,7 @@ onUnmounted(() => {
 							ref="btnSplitSubmitRef"
 							class="rounded-full"
 						>
-							<DashPiecesAvatar :piece="current.piece" />
+							<DashPiecesAvatar :piece="selectedPiece" />
 						</button>
 					</div>
 				</footer>
