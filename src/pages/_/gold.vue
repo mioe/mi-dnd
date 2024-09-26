@@ -143,7 +143,6 @@ async function getFriendly() {
 	const wallets = await pb.collection('gold').getList(1, 5, {
 		filter: `hero.id != "${appStore.currentHero?.id}"`,
 		expand: 'hero',
-		fields: 'id,expand.hero.name,expand.hero.class',
 	})
 
 	friendly.wallets = wallets.items as []
@@ -155,12 +154,14 @@ const { pressed: btnSplitSubmitPressed } = useMousePressed({ target: btnSplitSub
 
 async function onLongPressCallbackHookBtnSplitSubmit() {
 	const mySplitData = { [selectedPiece.value]: pieces[selectedPiece.value] + mySplit.value }
-	const friendlySplitData = { [selectedPiece.value]: pieces[selectedPiece.value] + friendlySplit.value }
+	await getFriendly() // fix: get last gold
 	const promises = [
 		pb.collection('gold').update(current.myRecordId, mySplitData),
 		...friendly.wallets
 			.filter((w: any) => friendly.selectedWalletIds.includes(w.id))
-			.map((w: any) => pb.collection('gold').update(w.id, friendlySplitData)),
+			.map((w: any) => pb.collection('gold').update(w.id, {
+				[selectedPiece.value]: w[selectedPiece.value] + friendlySplit.value,
+			})),
 	]
 	await Promise.allSettled(promises)
 	current.split = 0
