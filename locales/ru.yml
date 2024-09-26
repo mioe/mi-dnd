@@ -26,7 +26,15 @@ stat:
   maxHit: Максимум хитов
   currentHit: Текущие хиты
   tempHit: Временные хиты
+  armor: КД
+  strength: Сила
+  dexterity: Ловкость
+  constitution: Телосложение
+  intelligence: Интеллект
+  wisdom: Мудрость
+  charisma: Харизма
 my-heroes: Мои персонажи
+hit: Здоровье
 copper:
   short: мм
   long: Медные монеты

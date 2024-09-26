@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import DragnaBattleScreen from '~/components/Dragna/DragnaBattleScreen.vue'
+import DashBattleScreen from '~/components/Dash/DashBattleScreen.vue'
 import type { HeroStat } from '~/interfaces'
 const pb = usePB()
 const appStore = useAppStore()
@@ -40,7 +40,13 @@ async function getStats() {
 		`hero.id = "${appStore.currentHero?.id}"`,
 	)
 	meta.recordId = record.id
-	current.initiative = record.initiative ?? 0
+	Object.entries(record).forEach(([statKey, statVal]) => {
+		if (currentStatKeys.includes(statKey)) {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-expect-error
+			current[statKey] = statVal ?? 0
+		}
+	})
 }
 
 function getRealtimeStats() {
@@ -61,8 +67,8 @@ async function onUpdateStat(statKey: string, statVal: any) {
 	await pb.collection('stat').update(meta.recordId, { [statKey]: statVal })
 }
 
-async function onSubmitStat(statKey: string, statValue: any) {
-	await onUpdateStat(statKey, statValue)
+async function onSubmitStat({key, val}: {key: string, val?: string | number}) {
+	await onUpdateStat(key, val)
 }
 
 onMounted(async() => {
@@ -81,8 +87,15 @@ onUnmounted(() => {
 		v-if="!isLoading"
 		class="relative w-svw flex flex-1 select-none overflow-hidden"
 	>
-		<DragnaBattleScreen
-			v-if="appStore.currentHero?.id === 'y3zz7mpfqwnr7h2'"
+		<DashBattleScreen
+			:max-hit="current.maxHit"
+			:armor="current.armor"
+			:strength="current.strength"
+			:dexterity="current.dexterity"
+			:constitution="current.constitution"
+			:intelligence="current.intelligence"
+			:wisdom="current.wisdom"
+			:charisma="current.charisma"
 			:initiative="current.initiative"
 			@submit="onSubmitStat"
 		/>
