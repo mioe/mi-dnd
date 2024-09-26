@@ -1,5 +1,4 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-// const pb = usePB()
 
 export const useMasterStore = defineStore('master', () => {
 	const masterToken = useStorage('master_token', false)

@@ -49,6 +49,27 @@ const pieces = reactive({
 	copper: 0,
 })
 
+const friendly = reactive<any>({
+	wallets: [],
+	selectedWalletIds: [],
+})
+
+const mySplit = computed(() => getSingleSplit(true))
+const friendlySplit = computed(() => getSingleSplit())
+
+function getSingleSplit(my = false) {
+	if (current.split > 0) {
+		const count = friendly.selectedWalletIds.length + 1
+		const quotient = Math.floor(current.split / count)
+		if (my) {
+			const remainder = current.split % count
+			return quotient + remainder
+		}
+		return quotient
+	}
+	return 0
+}
+
 const btnCreditDebitSubmitRef = shallowRef()
 const inputCreditDebitRef = shallowRef()
 const { pressed: btnCreditDebitSubmitPressed } = useMousePressed({ target: btnCreditDebitSubmitRef })
@@ -122,8 +143,44 @@ function getRealtimeGold() {
 	})
 }
 
+async function getFriendly() {
+	const wallets = await pb.collection('gold').getList(1, 5, {
+		filter: `hero.id != "${appStore.currentHero?.id}"`,
+		expand: 'hero',
+		fields: 'id,expand.hero.name,expand.hero.class',
+	})
+
+	friendly.wallets = wallets.items as []
+}
+
+const btnSplitSubmitRef = shallowRef()
+const inputSplitRef = shallowRef()
+const { pressed: btnSplitSubmitPressed } = useMousePressed({ target: btnSplitSubmitRef })
+
+async function onLongPressCallbackHookBtnSplitSubmit() {
+	const mySplitData = { [current.piece]: pieces[current.piece] + mySplit.value }
+	const friendlySplitData = { [current.piece]: pieces[current.piece] + friendlySplit.value }
+	const promises = [
+		pb.collection('gold').update(current.myRecordId, mySplitData),
+		...friendly.wallets
+			.filter((w: any) => friendly.selectedWalletIds.includes(w.id))
+			.map((w: any) => pb.collection('gold').update(w.id, friendlySplitData)),
+	]
+	await Promise.allSettled(promises)
+	current.split = 0
+	btnSplitSubmitPressed.value = false
+	inputSplitRef.value?.blur()
+}
+
+onLongPress(
+	btnSplitSubmitRef,
+	onLongPressCallbackHookBtnSplitSubmit,
+	{ delay: 1000 },
+)
+
 onMounted(async() => {
 	await getGold()
+	await getFriendly()
 	getRealtimeGold()
 	isLoading.value = false
 })
@@ -226,29 +283,77 @@ onUnmounted(() => {
 				</footer>
 			</DashSnapChild>
 			<DashSnapChild>
-				<header>
-					# todo нужны больше персонажей
+				<header class="w-[330px] flex flex-col items-center justify-center gap-4">
+					<div class="h-[64px] w-full flex items-center justify-between gap-2 border rounded-[30px] py-[6px] pl-[18px] pr-[8px]">
+						<div class="flex flex-col text-left">
+							<span class="text-[12px]">{{ appStore.currentHero.class }}</span>
+							<h2 class="text-[16px] font-bold">
+								{{ appStore.currentHero.name }}
+							</h2>
+						</div>
+						<div class="flex items-center gap-2">
+							<span>+{{ mySplit }}</span>
+							<DashPiecesAvatar :piece="current.piece" />
+						</div>
+					</div>
+					<h2>{{ $t('friendly') }}:</h2>
+					<label
+						v-for="wallet in friendly.wallets"
+						:key="wallet.id"
+						class="h-[64px] w-full flex cursor-pointer items-center justify-between gap-2 border rounded-[30px] py-[6px] pl-[18px] pr-[8px]"
+					>
+						<div class="flex items-center gap-4">
+							<input
+								v-model="friendly.selectedWalletIds"
+								type="checkbox"
+								class="scale-150 rounded-full"
+								:value="wallet.id"
+							/>
+							<div class="flex flex-col text-left">
+								<span class="text-[12px]">{{ wallet.expand.hero.class }}</span>
+								<h2 class="text-[16px] font-bold">
+									{{ wallet.expand.hero.name }}
+								</h2>
+							</div>
+						</div>
+						<div
+							v-if="friendly.selectedWalletIds.includes(wallet.id)"
+							class="flex items-center gap-2"
+						>
+							<span>+{{ friendlySplit }}</span>
+							<DashPiecesAvatar :piece="current.piece" />
+						</div>
+					</label>
 				</header>
 				<footer class="mb-4 mt-auto flex flex-col gap-4">
 					<DashPiecesPickerSmall @submit="current.piece = $event" />
 
-					<div class="w-[300px] flex items-center gap-2 border rounded-[30px] px-[8px] py-[6px]">
+					<div class="relative w-[300px] flex items-center justify-between gap-2 border rounded-[30px] py-[6px] pl-[16px] pr-[8px]">
+						<Transition>
+							<div
+								v-if="btnSplitSubmitPressed"
+								class="absolute bottom-[calc(100%+16px)] left-0 w-full"
+							>
+								<DashProgress label="1 sec" />
+							</div>
+						</Transition>
+						<div>
+							<h2 class="text-[12px]">
+								Split:
+							</h2>
+							<input
+								ref="inputSplitRef"
+								v-model="current.split"
+								type="number"
+								class="w-[180px] text-[18px] font-bold"
+							/>
+						</div>
 						<button
 							ref="btnSplitSubmitRef"
 							class="rounded-full"
 						>
 							<DashPiecesAvatar :piece="current.piece" />
 						</button>
-						<div>
-							<h2 class="text-[14px]">
-								Split:
-							</h2>
-							<input
-								v-model="current.split"
-								type="number"
-								class="w-[180px] text-[18px] font-bold"
-							/>
-						</div>
 					</div>
 				</footer>
 			</DashSnapChild>

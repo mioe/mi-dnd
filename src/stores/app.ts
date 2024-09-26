@@ -4,7 +4,7 @@ const pb = usePB()
 
 export const useAppStore = defineStore('app', () => {
 	const currentUser = ref(pb.authStore.model ?? undefined)
-	const currentHero = useStorage<{ id?: string, name?: string }>('current_hero', {})
+	const currentHero = useStorage<{ id?: string, name?: string, class?: string }>('current_hero', {})
 	const heroesWithPagination = ref<ListResult<RecordModel>>()
 
 	function cleanup() {
