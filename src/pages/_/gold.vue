@@ -71,8 +71,9 @@ const inputCreditDebitRef = shallowRef()
 const { pressed: btnCreditDebitSubmitPressed } = useMousePressed({ target: btnCreditDebitSubmitRef })
 
 async function onLongPressCallbackHookBtnCreditDebitSubmit() {
-	const data = { [selectedPiece.value]: pieces[selectedPiece.value] + current.count }
-	await pb.collection('gold').update(current.myRecordId, data)
+	await pb.collection('gold').update(current.myRecordId, {
+		[`${selectedPiece.value}+`]: current.count,
+	})
 	current.count = 0
 	btnCreditDebitSubmitPressed.value = false
 	inputCreditDebitRef.value?.blur()
@@ -143,6 +144,7 @@ async function getFriendly() {
 	const wallets = await pb.collection('gold').getList(1, 5, {
 		filter: `hero.id != "${appStore.currentHero?.id}"`,
 		expand: 'hero',
+		fields: 'id,expand.hero.name,expand.hero.class',
 	})
 
 	friendly.wallets = wallets.items as []
@@ -153,14 +155,14 @@ const inputSplitRef = shallowRef()
 const { pressed: btnSplitSubmitPressed } = useMousePressed({ target: btnSplitSubmitRef })
 
 async function onLongPressCallbackHookBtnSplitSubmit() {
-	const mySplitData = { [selectedPiece.value]: pieces[selectedPiece.value] + mySplit.value }
-	await getFriendly() // fix: get last gold
 	const promises = [
-		pb.collection('gold').update(current.myRecordId, mySplitData),
+		pb.collection('gold').update(current.myRecordId, {
+			[`${selectedPiece.value}+`]: mySplit.value,
+		}),
 		...friendly.wallets
 			.filter((w: any) => friendly.selectedWalletIds.includes(w.id))
 			.map((w: any) => pb.collection('gold').update(w.id, {
-				[selectedPiece.value]: w[selectedPiece.value] + friendlySplit.value,
+				[`${selectedPiece.value}+`]: friendlySplit.value,
 			})),
 	]
 	await Promise.allSettled(promises)
