@@ -97,6 +97,8 @@ onUnmounted(() => {
 			:wisdom="current.wisdom"
 			:charisma="current.charisma"
 			:initiative="current.initiative"
+			:current-hit="current.currentHit"
+			:temp-hit="current.tempHit"
 			@submit="onSubmitStat"
 		/>
 	</main>
