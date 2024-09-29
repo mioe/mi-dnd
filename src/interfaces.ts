@@ -39,4 +39,5 @@ export interface Spell {
 	type: string
 	class: ClassType[]
 	description: string
+	link?: string
 }

@@ -48,8 +48,8 @@ onMounted(async() => {
 <template>
 	<div class="flex flex-1 select-none">
 		<SnapParent v-if="!isLoading">
-			<SnapChild :style="{ padding: 0 }">
-				<div class="relative max-h-[calc(100svh-80px)] flex flex-col gap-4 overflow-auto p-4">
+			<SnapChild :style="{ padding: 0, justifyContent: 'flex-start' }">
+				<div class="relative h-[calc(100svh-80px)] flex flex-col gap-4 overflow-auto p-4">
 					<DashWikiSpell
 						v-for="spell in spells.items"
 						:key="spell.id"
@@ -57,11 +57,12 @@ onMounted(async() => {
 						:type="spell.type"
 						:classes="spell.class"
 						:description="spell.description"
+						:link="spell.link"
 					/>
 					<div class="w-full border rounded">
 						#todo pagi
 					</div>
-					<div class="sticky bottom-0 left-0 z-1 w-full border rounded bg-white">
+					<div class="sticky bottom-0 left-0 z-1 mt-auto w-full border rounded bg-white">
 						#todo search
 					</div>
 				</div>

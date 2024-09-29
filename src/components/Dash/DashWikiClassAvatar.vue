@@ -27,6 +27,7 @@ function getSpriteForClass(cls: ClassType) {
 <template>
 	<div class="relative h-[1px] self-stretch">
 		<div
+			v-if="classes.length === 1"
 			class="absolute right-[-8px] top-[-8px] aspect-[5/3] h-[90px] opacity-10 -z-1"
 			:style="{
 				backgroundImage: 'url(/assets/pictures/sprite-classes.png)',

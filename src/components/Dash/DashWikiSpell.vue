@@ -7,6 +7,7 @@ defineProps<{
 	type: string
 	classes: ClassType[]
 	description: string
+	link?: string
 }>()
 </script>
 
@@ -33,5 +34,13 @@ defineProps<{
 			v-html="description"
 		/>
 		<!-- eslint-enable vue/no-v-html -->
+		<a
+			v-if="link"
+			:href="link"
+			target="_blank"
+			class="text-[10px] text-blue-400 underline decoration-dashed"
+		>
+			{{ link }}
+		</a>
 	</article>
 </template>
