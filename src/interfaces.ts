@@ -31,3 +31,12 @@ export interface HeroStat extends CoreStat {
 }
 
 export type RestType = 'shortRest' | 'longRest'
+export type ClassType = 'Barbarian' | 'Bard' | 'Cleric' | 'Druid' | 'Fighter' | 'Monk' | 'Paladin' | 'Ranger' | 'Rogue' | 'Sorcerer' | 'Warlock' | 'Wizard'
+
+export interface Spell {
+	id: string
+	name: string
+	type: string
+	class: ClassType[]
+	description: string
+}

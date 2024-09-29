@@ -30,7 +30,7 @@ const isOpen = ref(false)
 <template>
 	<header
 		v-if="!masterStore.masterToken"
-		class="min-h-[34px] flex justify-center border-b p-4"
+		class="min-h-[34px] flex select-none justify-center border-b p-4"
 	>
 		<div v-if="!isAuthorized">
 			<form
@@ -97,6 +97,9 @@ const isOpen = ref(false)
 					</RouterLink>
 					<RouterLink to="/_/gold">
 						{{ $t('page._.gold') }}
+					</RouterLink>
+					<RouterLink to="/_/wiki">
+						{{ $t('page._.wiki') }}
 					</RouterLink>
 				</template>
 			</nav>
