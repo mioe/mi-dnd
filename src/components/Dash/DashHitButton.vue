@@ -30,7 +30,7 @@ onLongPress(
 </script>
 
 <template>
-	<div class="inline flex items-center justify-between gap-2">
+	<div class="inline-flex items-center justify-between gap-2">
 		<button
 			v-if="isShowTempHit"
 			:class="[

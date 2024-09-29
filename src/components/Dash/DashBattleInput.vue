@@ -121,23 +121,23 @@ defineExpose({
 				<button
 					v-show="statType === 'core'"
 					ref="btnSubmitRef"
-					class="h-full w-[46px] border border-orange-400 rounded-full bg-orange-200"
+					class="h-full w-[46px] flex items-center justify-center border border-orange-400 rounded-full bg-orange-200 text-orange-600"
 				>
-					S
+					<div class="i-mi:hugeicons-tick04 h-[24px] w-[24px]" />
 				</button>
 				<button
 					v-show="statType === 'custom'"
 					ref="btnIncrementRef"
-					class="h-full w-[46px] border border-green-400 rounded-full bg-green-200"
+					class="h-full w-[46px] flex items-center justify-center border border-green-400 rounded-full bg-green-200 text-green-600"
 				>
-					+
+					<div class="i-mi:hugeicons-add02 h-[24px] w-[24px]" />
 				</button>
 				<button
 					v-show="statType === 'custom'"
 					ref="btnDecrementRef"
-					class="h-full w-[46px] border border-red-400 rounded-full bg-red-200"
+					class="h-full w-[46px] flex items-center justify-center border border-red-400 rounded-full bg-red-200 text-red-600"
 				>
-					--
+					<div class="i-mi:hugeicons-minus-by-mioe h-[24px] w-[24px]" />
 				</button>
 			</div>
 		</div>

@@ -29,3 +29,5 @@ export interface HeroStat extends CoreStat {
 	spellSaveDc: number
 	spellAttackBonus: number
 }
+
+export type RestType = 'shortRest' | 'longRest'

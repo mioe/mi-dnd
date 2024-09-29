@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import type { RestType } from '~/interfaces'
+
 import SnapParent from '~/components/_common/SnapParent.vue'
 import SnapChild from '~/components/_common/SnapChild.vue'
 import DashBattleCoreStat from '~/components/Dash/DashBattleCoreStat.vue'
 import DashBattleInput from '~/components/Dash/DashBattleInput.vue'
 import DashBattle3DBg from '~/components/Dash/DashBattle3DBg.vue'
 import DashHitButton from '~/components/Dash/DashHitButton.vue'
+import DashBattleRest from '~/components/Dash/DashBattleRest.vue'
 
-defineProps<{
+const { maxHit } = defineProps<{
 	maxHit: number
 	armor: number
 	strength: number
@@ -51,6 +54,12 @@ function onDecrement(ev: number) {
 function onSubmit(ev: number) {
 	emit('submit', { key: current.statKey, val: ev })
 	currentReset()
+}
+
+function onSubmitRest({ key }: { key: RestType }) {
+	if (key === 'longRest') {
+		emit('submit', { key: 'currentHit', val: maxHit })
+	}
 }
 
 function handleSubmitCoreStat({ key, value }: { key: string, value: number }) {
@@ -137,6 +146,8 @@ function handleSubmitCustomStat({ key }: { key: string }) {
 					/>
 				</div>
 				<div class="flex flex-1 flex-col items-end gap-2">
+					<DashBattleRest @submit="onSubmitRest" />
+
 					<DashHitButton
 						:current-hit="currentHit"
 						:temp-hit="tempHit"
