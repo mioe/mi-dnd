@@ -26,7 +26,6 @@ onLongPress(
 	onLongPressCallback,
 	{ delay: 1000 },
 )
-
 </script>
 
 <template>

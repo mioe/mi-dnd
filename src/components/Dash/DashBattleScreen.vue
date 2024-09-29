@@ -8,8 +8,12 @@ import DashBattleInput from '~/components/Dash/DashBattleInput.vue'
 import DashBattle3DBg from '~/components/Dash/DashBattle3DBg.vue'
 import DashHitButton from '~/components/Dash/DashHitButton.vue'
 import DashBattleRest from '~/components/Dash/DashBattleRest.vue'
+import DashWikiSpell from '~/components/Dash/DashWikiSpell.vue'
 
-const { maxHit } = defineProps<{
+// dynamic
+import DashBattleSpellcastingButton from '~/components/Dash/DashBattleSpellcastingButton.vue'
+
+const { maxHit, spells } = defineProps<{
 	maxHit: number
 	armor: number
 	strength: number
@@ -22,12 +26,14 @@ const { maxHit } = defineProps<{
 	currentHit: number
 	tempHit: number
 	avatar3dPath: string
+	spells: any
 }>()
 
 const emit = defineEmits<{
 	increment: [{ key: string, val: number }]
 	decrement: [{ key: string, val: number }]
-	submit: [{ key: string, val: number | string }]
+	submit: [{ key: string, val: any }]
+	'submit-spell': [{ key: string, val: any }]
 }>()
 
 const dashBattleInputRef = shallowRef<InstanceType<typeof DashBattleInput> | undefined>()
@@ -35,6 +41,15 @@ const dashBattleInputRef = shallowRef<InstanceType<typeof DashBattleInput> | und
 const current = reactive({
 	statKey: '',
 	statType: '',
+})
+
+const dynamicSpell = [
+	import.meta.env.VITE_SPELLCASTING_ID,
+	import.meta.env.VITE_BARDIC_INSPIRATION_ID,
+	import.meta.env.VITE_LUCKY_ID,
+]
+const getDynamicSpell = computed(() => {
+	return spells.filter((spell: any) => dynamicSpell.includes(spell.expand.spell.id))
 })
 
 function currentReset() {
@@ -73,6 +88,18 @@ function handleSubmitCustomStat({ key }: { key: string }) {
 	current.statKey = key
 	current.statType = 'custom'
 	dashBattleInputRef.value?.init(key, 0)
+}
+
+function onSubmitSpell({ key, val }: { key: string, val: any }) {
+	emit('submit-spell', { key, val })
+}
+
+function getDynamicSpellData(spellId: string) {
+	const f = getDynamicSpell.value.find((spell: any) => spell.expand.spell.id === spellId)
+	if (f) {
+		return f
+	}
+	return false
 }
 </script>
 
@@ -149,13 +176,19 @@ function handleSubmitCustomStat({ key }: { key: string }) {
 				<div class="flex flex-1 flex-col items-end gap-2">
 					<DashBattleRest @submit="onSubmitRest" />
 
-					<DashHitButton
-						:current-hit="currentHit"
-						:temp-hit="tempHit"
-						:current-stat="current.statKey"
-						class="mt-auto"
-						@submit="handleSubmitCustomStat($event)"
-					/>
+					<div class="mt-auto text-right space-y-2">
+						<DashBattleSpellcastingButton
+							v-if="getDynamicSpellData(dynamicSpell[0])"
+							:spell="getDynamicSpellData(dynamicSpell[0])"
+							@submit="onSubmitSpell"
+						/>
+						<DashHitButton
+							:current-hit="currentHit"
+							:temp-hit="tempHit"
+							:current-stat="current.statKey"
+							@submit="handleSubmitCustomStat($event)"
+						/>
+					</div>
 				</div>
 			</header>
 			<footer class="mb-4 mt-auto">
@@ -170,8 +203,19 @@ function handleSubmitCustomStat({ key }: { key: string }) {
 				/>
 			</footer>
 		</SnapChild>
-		<SnapChild>
-			2
+		<SnapChild :style="{ padding: 0, justifyContent: 'flex-start' }">
+			<div class="relative h-[calc(100svh-80px)] flex flex-col gap-4 overflow-auto p-4">
+				<DashWikiSpell
+					v-for="spell in spells"
+					:key="spell.id"
+					:name="spell.expand.spell.name"
+					:type="spell.expand.spell.type"
+					:classes="spell.expand.spell.class"
+					:description="spell.expand.spell.description"
+					:link="spell.expand.spell.link"
+					@submit="onSubmitSpell"
+				/>
+			</div>
 		</SnapChild>
 	</SnapParent>
 </template>

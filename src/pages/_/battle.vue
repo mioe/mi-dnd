@@ -34,6 +34,7 @@ const current = reactive<HeroStat>({
 	spellAttackBonus: 0,
 })
 const currentStatKeys = Object.keys(current)
+const mySpells = ref([])
 
 async function getStats() {
 	const record = await pb.collection('stat').getFirstListItem(
@@ -103,15 +104,47 @@ function get3DAvatarPath() {
 	return className[currentHeroClass] ?? ''
 }
 
+async function getMySpell() {
+	const result = await pb.collection('hero_on_spell').getList(1, 100, {
+		filter: `hero.id = "${appStore.currentHero?.id}"`,
+		expand: 'spell',
+	})
+	mySpells.value = result.items as any
+}
+
+function getRealtimeMySpell() {
+	pb.collection('hero_on_spell').subscribe('*', ev => {
+		if (ev.action === 'update') {
+			const fSpell = mySpells.value.find((spell: any) => spell.id === ev.record.id)
+			if (fSpell) {
+				Object.entries(ev.record).forEach(([spellKey, spellMeta]) => {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-expect-error
+					fSpell[spellKey] = spellMeta
+				})
+			}
+		}
+	})
+}
+
+async function onUpdateSpell({ key, val }: { key: string, val: any }) {
+	if (val.data) {
+		await pb.collection('hero_on_spell').update(val.id, { data: val.data })
+	}
+}
+
 onMounted(async() => {
 	await getStats()
 	getRealtimeStats()
 	get3DAvatarPath()
+	await getMySpell()
+	getRealtimeMySpell()
 	isLoading.value = false
 })
 
 onUnmounted(() => {
 	pb.collection('stat').unsubscribe(meta.recordId)
+	pb.collection('hero_on_spell').unsubscribe('*')
 })
 </script>
 
@@ -133,9 +166,11 @@ onUnmounted(() => {
 			:current-hit="current.currentHit"
 			:temp-hit="current.tempHit"
 			:avatar3d-path="get3DAvatarPath()"
+			:spells="mySpells"
 			@increment="onIncrementStat"
 			@decrement="onDecrementStat"
 			@submit="onSubmitStat"
+			@submit-spell="onUpdateSpell"
 		/>
 	</main>
 	<p v-else>
