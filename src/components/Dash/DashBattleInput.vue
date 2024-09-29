@@ -82,9 +82,16 @@ defineExpose({
 		<Transition>
 			<div
 				v-if="btnIncrementPressed || btnDecrementPressed || btnSubmitPressed"
-				class="absolute bottom-[calc(100%+16px)] left-0 w-full"
+				class="absolute bottom-[calc(100%+8px)] left-0 w-full"
 			>
-				<DashProgress label="1 sec" />
+				<DashProgress
+					:class="[
+						{'border-green-400 text-green-200': btnIncrementPressed },
+						{'border-red-400 text-red-200': btnDecrementPressed },
+						{'border-orange-400 text-orange-200': btnSubmitPressed },
+					]"
+					:height="16"
+				/>
 			</div>
 		</Transition>
 
@@ -114,23 +121,23 @@ defineExpose({
 				<button
 					v-show="statType === 'core'"
 					ref="btnSubmitRef"
-					class="h-full w-[46px] border rounded-full"
+					class="h-full w-[46px] border border-orange-400 rounded-full bg-orange-200"
 				>
 					S
 				</button>
 				<button
-					v-show="statType !== 'core'"
+					v-show="statType === 'custom'"
 					ref="btnIncrementRef"
-					class="h-full w-[46px] border rounded-full"
+					class="h-full w-[46px] border border-green-400 rounded-full bg-green-200"
 				>
 					+
 				</button>
 				<button
-					v-show="statType !== 'core'"
+					v-show="statType === 'custom'"
 					ref="btnDecrementRef"
-					class="h-full w-[46px] border rounded-full"
+					class="h-full w-[46px] border border-red-400 rounded-full bg-red-200"
 				>
-					-
+					--
 				</button>
 			</div>
 		</div>

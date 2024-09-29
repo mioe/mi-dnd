@@ -258,7 +258,10 @@ onUnmounted(() => {
 								v-if="btnCreditDebitSubmitPressed"
 								class="absolute bottom-[calc(100%+16px)] left-0 w-full"
 							>
-								<DashProgress label="1 sec" />
+								<DashProgress
+									class="border-blue-400 text-blue-300"
+									rounded
+								/>
 							</div>
 						</Transition>
 						<div>
@@ -333,7 +336,10 @@ onUnmounted(() => {
 								v-if="btnSplitSubmitPressed"
 								class="absolute bottom-[calc(100%+16px)] left-0 w-full"
 							>
-								<DashProgress label="1 sec" />
+								<DashProgress
+									class="border-blue-400 text-blue-300"
+									rounded
+								/>
 							</div>
 						</Transition>
 						<div>

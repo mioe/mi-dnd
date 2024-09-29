@@ -30,13 +30,11 @@ const dashBattleInputRef = shallowRef<InstanceType<typeof DashBattleInput> | und
 
 const current = reactive({
 	statKey: '',
-	statVal: 0,
 	statType: '',
 })
 
 function currentReset() {
 	current.statKey = ''
-	current.statVal = 0
 	current. statType = ''
 }
 
@@ -57,16 +55,14 @@ function onSubmit(ev: number) {
 
 function handleSubmitCoreStat({ key, value }: { key: string, value: number }) {
 	current.statKey = key
-	current.statVal = value
 	current.statType = 'core'
 	dashBattleInputRef.value?.init(key, value)
 }
 
-function handleSubmitCustomStat({ key, value }: { key: string, value: number }) {
+function handleSubmitCustomStat({ key }: { key: string }) {
 	current.statKey = key
-	current.statVal = value
 	current.statType = 'custom'
-	dashBattleInputRef.value?.init(key, value)
+	dashBattleInputRef.value?.init(key, 0)
 }
 </script>
 
