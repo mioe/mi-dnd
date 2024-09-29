@@ -21,6 +21,7 @@ const { maxHit } = defineProps<{
 	initiative: number
 	currentHit: number
 	tempHit: number
+	avatar3dPath: string
 }>()
 
 const emit = defineEmits<{
@@ -79,7 +80,7 @@ function handleSubmitCustomStat({ key }: { key: string }) {
 	<SnapParent>
 		<SnapChild>
 			<header class="relative w-[360px] flex flex-1 justify-between gap-4">
-				<DashBattle3DBg />
+				<DashBattle3DBg :model-path="avatar3dPath" />
 
 				<div class="w-[130px] flex flex-col items-start gap-2">
 					<DashBattleCoreStat

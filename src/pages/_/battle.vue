@@ -84,9 +84,29 @@ async function onDecrementStat({ key, val }: { key: string, val: number }) {
 	await onUpdateStat({ statKey: key, statVal: val, type: 'decrement' })
 }
 
+function get3DAvatarPath() {
+	const heroId = {
+		[import.meta.env.VITE_DRAGNA_ID]: '/assets/models/Dragna.stl',
+	}
+	const currentHeroId = appStore.currentHero?.id as any
+	if (heroId[currentHeroId]) {
+		return heroId[currentHeroId]
+	}
+	const className = {
+		Бард: '/assets/models/Bard.stl',
+		Друид: '/assets/models/Druid.stl',
+		Воин: '/assets/models/Fighter.stl',
+	}
+	const currentHeroClass = appStore.currentHero?.class as any
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-expect-error
+	return className[currentHeroClass] ?? ''
+}
+
 onMounted(async() => {
 	await getStats()
 	getRealtimeStats()
+	get3DAvatarPath()
 	isLoading.value = false
 })
 
@@ -112,6 +132,7 @@ onUnmounted(() => {
 			:initiative="current.initiative"
 			:current-hit="current.currentHit"
 			:temp-hit="current.tempHit"
+			:avatar3d-path="get3DAvatarPath()"
 			@increment="onIncrementStat"
 			@decrement="onDecrementStat"
 			@submit="onSubmitStat"
