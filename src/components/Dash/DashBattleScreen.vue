@@ -21,8 +21,8 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-	increment: [{ key: string, val: number | string }]
-	decrement: [{ key: string, val: number | string }]
+	increment: [{ key: string, val: number }]
+	decrement: [{ key: string, val: number }]
 	submit: [{ key: string, val: number | string }]
 }>()
 

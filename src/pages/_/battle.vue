@@ -63,12 +63,25 @@ function getRealtimeStats() {
 	})
 }
 
-async function onUpdateStat(statKey: string, statVal: any) {
-	await pb.collection('stat').update(meta.recordId, { [statKey]: statVal })
+async function onUpdateStat({ statKey, statVal, type }: { statKey: string, statVal: any, type: 'submit' | 'increment' | 'decrement' }) {
+	const keys = {
+		submit: statKey,
+		increment: `${statKey}+`,
+		decrement: `${statKey}-`,
+	}
+	await pb.collection('stat').update(meta.recordId, { [keys[type]]: statVal })
 }
 
-async function onSubmitStat({key, val}: {key: string, val?: string | number}) {
-	await onUpdateStat(key, val)
+async function onSubmitStat({ key, val }: { key: string, val?: string | number }) {
+	await onUpdateStat({ statKey: key, statVal: val, type: 'submit' })
+}
+
+async function onIncrementStat({ key, val }: { key: string, val: number }) {
+	await onUpdateStat({ statKey: key, statVal: val, type: 'increment' })
+}
+
+async function onDecrementStat({ key, val }: { key: string, val: number }) {
+	await onUpdateStat({ statKey: key, statVal: val, type: 'decrement' })
 }
 
 onMounted(async() => {
@@ -99,6 +112,8 @@ onUnmounted(() => {
 			:initiative="current.initiative"
 			:current-hit="current.currentHit"
 			:temp-hit="current.tempHit"
+			@increment="onIncrementStat"
+			@decrement="onDecrementStat"
 			@submit="onSubmitStat"
 		/>
 	</main>
