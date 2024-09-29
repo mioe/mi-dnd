@@ -40,9 +40,11 @@ const description = computed(() => {
 
 <template>
 	<section class="flex flex-col items-center gap-4 border rounded p-2">
-		<div class="relative aspect-[6/8] h-[200px] flex-shrink-0 overflow-hidden rounded-xl">
+		<div
+			v-if="avatar"
+			class="relative aspect-[6/8] h-[200px] flex-shrink-0 overflow-hidden rounded-xl"
+		>
 			<img
-				v-if="avatar"
 				:src="`/api/files/${collectionId}/${recordId}/${avatar}`"
 				:alt="recordId"
 				class="h-full w-full object-cover"
