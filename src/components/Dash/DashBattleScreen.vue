@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { RestType } from '~/interfaces'
+import type { RestType, HeroOnSpell } from '~/interfaces'
 
 import SnapParent from '~/components/_common/SnapParent.vue'
 import SnapChild from '~/components/_common/SnapChild.vue'
@@ -33,7 +33,7 @@ const emit = defineEmits<{
 	increment: [{ key: string, val: number }]
 	decrement: [{ key: string, val: number }]
 	submit: [{ key: string, val: any }]
-	'submit-spell': [{ key: string, val: any }]
+	'submit-spell': [HeroOnSpell]
 }>()
 
 const dashBattleInputRef = shallowRef<InstanceType<typeof DashBattleInput> | undefined>()
@@ -49,7 +49,7 @@ const dynamicSpell = [
 	import.meta.env.VITE_LUCKY_ID,
 ]
 const getDynamicSpell = computed(() => {
-	return spells.filter((spell: any) => dynamicSpell.includes(spell.expand.spell.id))
+	return spells.filter((spell: HeroOnSpell) => dynamicSpell.includes(spell.expand?.spell?.id))
 })
 
 function currentReset() {
@@ -90,8 +90,8 @@ function handleSubmitCustomStat({ key }: { key: string }) {
 	dashBattleInputRef.value?.init(key, 0)
 }
 
-function onSubmitSpell({ key, val }: { key: string, val: any }) {
-	emit('submit-spell', { key, val })
+function onSubmitSpell(spell: HeroOnSpell) {
+	emit('submit-spell', spell)
 }
 
 function getDynamicSpellData(spellId: string) {

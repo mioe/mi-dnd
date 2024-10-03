@@ -6,7 +6,7 @@ const { currentValue } = defineProps<{
 }>()
 
 const emit = defineEmits<{
-	submit: [{ val: boolean }]
+	submit: [boolean]
 }>()
 
 const btnRef = shallowRef()
@@ -14,7 +14,7 @@ const { pressed: btnPressed } = useMousePressed({ target: btnRef })
 
 function onLongPressCallback() {
 	btnPressed.value = false
-	emit('submit', { val: !currentValue })
+	emit('submit', !currentValue)
 }
 
 onLongPress(

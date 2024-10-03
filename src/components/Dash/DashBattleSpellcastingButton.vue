@@ -1,12 +1,13 @@
 <script setup lang="ts">
+import type { HeroOnSpell } from '~/interfaces'
 import DashBattleSpellcastingButtonMana from '~/components/Dash/DashBattleSpellcastingButtonMana.vue'
 
 const { spell } = defineProps<{
-	spell: any
+	spell: HeroOnSpell
 }>()
 
 const emit = defineEmits<{
-	submit: [{ key: string, val: any }]
+	submit: [HeroOnSpell]
 }>()
 
 function onSubmitMana({ key, val }: { key: number, val: boolean }) {
@@ -17,7 +18,7 @@ function onSubmitMana({ key, val }: { key: number, val: boolean }) {
 		}
 	}
 	data[key] = val
-	emit('submit', { key: 'spellcasting', val: { ...spell, data } })
+	emit('submit', { ...spell, data })
 }
 </script>
 
@@ -29,7 +30,7 @@ function onSubmitMana({ key, val }: { key: number, val: boolean }) {
 				v-for="idx in spell.maxLimit"
 				:key="idx"
 				:current-value="spell.data ? spell.data[idx] ?? false : false"
-				@submit="onSubmitMana({ key: idx, val: $event.val })"
+				@submit="onSubmitMana({ key: idx, val: $event })"
 			/>
 		</div>
 	</button>

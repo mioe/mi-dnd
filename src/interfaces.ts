@@ -41,3 +41,16 @@ export interface Spell {
 	description: string
 	link?: string
 }
+
+export interface HeroOnSpell {
+	id: string
+	hero: string
+	maxLimit: number
+	spell: string
+	data: any
+	expand?: {
+		spell?: {
+			id: string
+		}
+	}
+}

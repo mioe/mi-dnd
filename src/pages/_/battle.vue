@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DashBattleScreen from '~/components/Dash/DashBattleScreen.vue'
-import type { HeroStat } from '~/interfaces'
+import type { HeroStat, HeroOnSpell } from '~/interfaces'
 const pb = usePB()
 const appStore = useAppStore()
 
@@ -115,7 +115,7 @@ async function getMySpell() {
 function getRealtimeMySpell() {
 	pb.collection('hero_on_spell').subscribe('*', ev => {
 		if (ev.action === 'update') {
-			const fSpell = mySpells.value.find((spell: any) => spell.id === ev.record.id)
+			const fSpell = mySpells.value.find((spell: HeroOnSpell) => spell.id === ev.record.id)
 			if (fSpell) {
 				Object.entries(ev.record).forEach(([spellKey, spellMeta]) => {
 					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -127,9 +127,9 @@ function getRealtimeMySpell() {
 	})
 }
 
-async function onUpdateSpell({ key, val }: { key: string, val: any }) {
-	if (val.data) {
-		await pb.collection('hero_on_spell').update(val.id, { data: val.data })
+async function onUpdateSpell(spell: HeroOnSpell) {
+	if (spell.data) {
+		await pb.collection('hero_on_spell').update(spell.id, { data: spell.data })
 	}
 }
 
