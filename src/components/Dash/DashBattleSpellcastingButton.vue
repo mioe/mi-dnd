@@ -7,7 +7,7 @@ const { spell } = defineProps<{
 }>()
 
 const emit = defineEmits<{
-	submit: [HeroOnSpell]
+	submit: [spell: HeroOnSpell]
 }>()
 
 function onSubmitMana({ key, val }: { key: number, val: boolean }) {

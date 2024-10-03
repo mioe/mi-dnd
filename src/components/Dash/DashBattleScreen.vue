@@ -33,7 +33,7 @@ const emit = defineEmits<{
 	increment: [{ key: string, val: number }]
 	decrement: [{ key: string, val: number }]
 	submit: [{ key: string, val: any }]
-	'submit-spell': [HeroOnSpell]
+	'submit-spell': [spell: HeroOnSpell]
 }>()
 
 const dashBattleInputRef = shallowRef<InstanceType<typeof DashBattleInput> | undefined>()
