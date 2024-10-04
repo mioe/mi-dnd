@@ -77,6 +77,10 @@ function onSubmit(ev: number) {
 function onSubmitRest({ key }: { key: RestType }) {
 	if (key === 'longRest') {
 		emit('submit', { key: 'currentHit', val: maxHit })
+		getDynamicSpell.value.forEach((spell: any) => {
+			const tmpDataSpell = useSpellDataResetByMaxLimit(spell.maxLimit)
+			emit('submit-spell', { ...spell, data: tmpDataSpell })
+		})
 	}
 }
 

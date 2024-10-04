@@ -13,7 +13,6 @@ const { pressed: btnShortRestPressed } = useMousePressed({ target: btnShortRestR
 const { pressed: btnLongRestPressed } = useMousePressed({ target: btnLongRestRef })
 
 function onLongPressCallback(type: RestType) {
-	console.log('🦕 onLongPressCallback', type)
 	btnShortRestPressed.value = false
 	btnLongRestPressed.value = false
 	emit('submit', { key: type })
