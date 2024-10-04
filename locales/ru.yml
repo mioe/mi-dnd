@@ -54,4 +54,7 @@ platinum:
 friendly: Союзники
 short-rest: Короткий отдых
 long-rest: Длинный отдых
-spellcasting: Ячейки маны
+spell:
+  spellcasting: Ячейки маны
+  bardic-inspiration: Кубики вдохновения
+  lucky: Переброс провального кубика

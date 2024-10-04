@@ -29,7 +29,6 @@ onLongPress(
 		ref="btnRef"
 		:class="[
 			'relative h-[32px] w-[32px] flex items-center justify-center',
-			{ 'text-blue-400': currentValue },
 			{ 'text-gray-200': !currentValue },
 		]"
 	>
@@ -44,6 +43,9 @@ onLongPress(
 				/>
 			</div>
 		</Transition>
-		<slot :btn-pressed="btnPressed" />
+		<slot
+			:btn-pressed="btnPressed"
+			:current-value="currentValue"
+		/>
 	</button>
 </template>

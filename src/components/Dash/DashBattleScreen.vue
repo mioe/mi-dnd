@@ -11,6 +11,8 @@ import DashBattleRest from '~/components/Dash/DashBattleRest.vue'
 import DashWikiSpell from '~/components/Dash/DashWikiSpell.vue'
 
 // dynamic
+import BardicInspiration from '~/components/DynamicSpell/BardicInspiration.vue'
+import Lucky from '~/components/DynamicSpell/Lucky.vue'
 import Spellcasting from '~/components/DynamicSpell/Spellcasting.vue'
 
 const { maxHit, spells } = defineProps<{
@@ -176,10 +178,22 @@ function getDynamicSpellData(spellId: string) {
 				<div class="flex flex-1 flex-col items-end gap-2">
 					<DashBattleRest @submit="onSubmitRest" />
 
+
+
 					<div class="mt-auto text-right space-y-2">
+						<BardicInspiration
+							v-if="getDynamicSpellData(SPELLS.get('BARDIC_INSPIRATION_ID'))"
+							:spell="getDynamicSpellData(SPELLS.get('BARDIC_INSPIRATION_ID'))"
+							@submit="onSubmitSpell"
+						/>
 						<Spellcasting
 							v-if="getDynamicSpellData(SPELLS.get('SPELLCASTING_ID'))"
 							:spell="getDynamicSpellData(SPELLS.get('SPELLCASTING_ID'))"
+							@submit="onSubmitSpell"
+						/>
+						<Lucky
+							v-if="getDynamicSpellData(SPELLS.get('LUCKY_ID'))"
+							:spell="getDynamicSpellData(SPELLS.get('LUCKY_ID'))"
 							@submit="onSubmitSpell"
 						/>
 						<DashHitButton

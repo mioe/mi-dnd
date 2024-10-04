@@ -14,18 +14,18 @@ defineEmits<{
 <template>
 	<DashBattleSpellArea
 		v-slot="slotProps"
-		:label="$t('spell.spellcasting')"
+		:label="$t('spell.bardic-inspiration')"
 		:spell="spell"
 		@submit="$emit('submit', $event)"
 	>
 		<div
 			:class="[
-				{ 'text-blue-400': slotProps.currentValue },
+				{ 'text-orange-300': slotProps.currentValue },
 			]"
 		>
 			<div
 				:class="[
-					'i-mi:hugeicons-gem h-[24px] w-[24px]',
+					'i-mi:ion-dice-outline h-[24px] w-[24px]',
 					{ 'text-orange-400': slotProps.btnPressed },
 				]"
 			/>

@@ -34,7 +34,10 @@ function onSubmitMana({ key, val }: { key: number, val: boolean }) {
 				:current-value="spell.data ? spell.data[idx] ?? false : false"
 				@submit="onSubmitMana({ key: idx, val: $event })"
 			>
-				<slot :btn-pressed="slotProps.btnPressed" />
+				<slot
+					:btn-pressed="slotProps.btnPressed"
+					:current-value="slotProps.currentValue"
+				/>
 			</DashBattleSpellButton>
 		</div>
 	</button>
