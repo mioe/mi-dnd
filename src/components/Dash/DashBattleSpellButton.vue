@@ -44,11 +44,6 @@ onLongPress(
 				/>
 			</div>
 		</Transition>
-		<div
-			:class="[
-				'i-mi:hugeicons-gem h-[24px] w-[24px]',
-				{ 'text-orange-400': btnPressed },
-			]"
-		/>
+		<slot :btn-pressed="btnPressed" />
 	</button>
 </template>

@@ -11,7 +11,7 @@ import DashBattleRest from '~/components/Dash/DashBattleRest.vue'
 import DashWikiSpell from '~/components/Dash/DashWikiSpell.vue'
 
 // dynamic
-import DashBattleSpellcastingButton from '~/components/Dash/DashBattleSpellcastingButton.vue'
+import Spellcasting from '~/components/DynamicSpell/Spellcasting.vue'
 
 const { maxHit, spells } = defineProps<{
 	maxHit: number
@@ -43,13 +43,13 @@ const current = reactive({
 	statType: '',
 })
 
-const dynamicSpell = [
-	import.meta.env.VITE_SPELLCASTING_ID,
-	import.meta.env.VITE_BARDIC_INSPIRATION_ID,
-	import.meta.env.VITE_LUCKY_ID,
-]
+const SPELLS = new Map()
+SPELLS.set('SPELLCASTING_ID', import.meta.env.VITE_SPELLCASTING_ID)
+SPELLS.set('BARDIC_INSPIRATION_ID', import.meta.env.VITE_BARDIC_INSPIRATION_ID)
+SPELLS.set('LUCKY_ID', import.meta.env.VITE_LUCKY_ID)
+
 const getDynamicSpell = computed(() => {
-	return spells.filter((spell: HeroOnSpell) => dynamicSpell.includes(spell.expand?.spell?.id))
+	return spells.filter((spell: HeroOnSpell) => Array.from(SPELLS.values()).includes(spell.expand?.spell?.id))
 })
 
 function currentReset() {
@@ -177,9 +177,9 @@ function getDynamicSpellData(spellId: string) {
 					<DashBattleRest @submit="onSubmitRest" />
 
 					<div class="mt-auto text-right space-y-2">
-						<DashBattleSpellcastingButton
-							v-if="getDynamicSpellData(dynamicSpell[0])"
-							:spell="getDynamicSpellData(dynamicSpell[0])"
+						<Spellcasting
+							v-if="getDynamicSpellData(SPELLS.get('SPELLCASTING_ID'))"
+							:spell="getDynamicSpellData(SPELLS.get('SPELLCASTING_ID'))"
 							@submit="onSubmitSpell"
 						/>
 						<DashHitButton

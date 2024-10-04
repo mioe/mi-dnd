@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { HeroOnSpell } from '~/interfaces'
-import DashBattleSpellcastingButtonMana from '~/components/Dash/DashBattleSpellcastingButtonMana.vue'
+import DashBattleSpellButton from '~/components/Dash/DashBattleSpellButton.vue'
 
-const { spell } = defineProps<{
+const { label = 'Label', spell } = defineProps<{
+	label: string
 	spell: HeroOnSpell
 }>()
 
@@ -24,14 +25,17 @@ function onSubmitMana({ key, val }: { key: number, val: boolean }) {
 
 <template>
 	<button class="relative inline-flex flex-col items-center gap-1 border bg-white px-2 py-1 text-[10px]">
-		<h2>{{ $t('spellcasting') }}</h2>
+		<h2>{{ label }}</h2>
 		<div class="flex flex-wrap gap-2">
-			<DashBattleSpellcastingButtonMana
+			<DashBattleSpellButton
 				v-for="idx in spell.maxLimit"
 				:key="idx"
+				v-slot="slotProps"
 				:current-value="spell.data ? spell.data[idx] ?? false : false"
 				@submit="onSubmitMana({ key: idx, val: $event })"
-			/>
+			>
+				<slot :btn-pressed="slotProps.btnPressed" />
+			</DashBattleSpellButton>
 		</div>
 	</button>
 </template>
