@@ -1,26 +1,10 @@
 <script setup lang="ts">
-const { delay = 800, height = 32, rounded } = defineProps<{
-	delay?: number
+const { height = 32, rounded } = defineProps<{
 	rounded?: boolean
 	height?: number
 }>()
 
-const count = ref(0)
 const borderRadius = computed(() => rounded ? height / 2 : 0)
-
-onMounted(() => {
-	const steps = 100
-	const stepDelay = delay / steps
-
-	function increment() {
-		count.value++
-		if (count.value <= 100) {
-			setTimeout(increment, stepDelay)
-		}
-	}
-
-	increment()
-})
 </script>
 
 <template>
@@ -32,11 +16,27 @@ onMounted(() => {
 		}"
 	>
 		<div
-			class="absolute left-0 top-0 h-full bg-current"
+			class="dash-progress absolute left-0 top-0 h-full w-full bg-current"
 			:style="{
-				width: `${count}%`,
 				borderRadius: `${borderRadius}px`,
 			}"
 		/>
 	</div>
 </template>
+
+<style>
+.dash-progress {
+	animation-duration: 1s;
+	animation-name: dash-progress;
+}
+
+@keyframes dash-progress {
+	from {
+		width: 0%;
+	}
+
+	to {
+		width: 100%;
+	}
+}
+</style>
