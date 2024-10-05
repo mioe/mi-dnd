@@ -7,6 +7,20 @@ import SnapChild from '~/components/_common/SnapChild.vue'
 const pb = usePB()
 
 const isLoading = ref(true)
+const classes = [
+	'Barbarian',
+	'Bard',
+	'Cleric',
+	'Druid',
+	'Fighter',
+	'Monk',
+	'Paladin',
+	'Ranger',
+	'Rogue',
+	'Sorcerer',
+	'Warlock',
+	'Wizard',
+]
 
 interface WikiEntity {
 	firstLoaded: boolean
@@ -26,8 +40,12 @@ const spells = reactive<WikiEntity>({
 	totalItems: 0,
 })
 
-async function getSpell() {
-	const result = await pb.collection('spell').getList(1, 50)
+async function searchSpell() {
+
+}
+
+async function getSpell(page: number, perPage: number) {
+	const result = await pb.collection('spell').getList(page, perPage)
 	spells.items = result.items as any
 	spells.page = result.page
 	spells.perPage = result.perPage
@@ -40,7 +58,7 @@ async function getSpell() {
 }
 
 onMounted(async() => {
-	await getSpell()
+	await getSpell(1, 50)
 	isLoading.value = false
 })
 </script>
@@ -59,11 +77,59 @@ onMounted(async() => {
 						:description="spell.description"
 						:link="spell.link"
 					/>
-					<div class="w-full border rounded">
-						#todo pagi
+					<div class="w-full flex flex-wrap gap-2">
+						<button
+							v-for="page in spells.totalPages"
+							:key="page"
+							:class="[
+								'border rounded-full px-4 py-2',
+								{ 'text-blue-600 font-bold': page === spells.page },
+							]"
+							@click="getSpell(page, spells.perPage)"
+						>
+							{{ page }}
+						</button>
 					</div>
-					<div class="sticky bottom-0 left-0 z-1 mt-auto w-full border rounded bg-white">
-						#todo search
+					<div class="sticky bottom-0 left-0 z-1 mt-auto w-full flex flex-col gap-2 border rounded bg-white p-1">
+						<div class="flex items-center justify-between gap-2">
+							<div class="flex flex-col">
+								<h2 class="text-[12px]">
+									Поиск по названию:
+								</h2>
+								<input
+									type="number"
+									class="w-[160px] text-[18px] font-bold"
+								/>
+							</div>
+
+							<button
+								class="h-full w-[46px] flex items-center justify-center border border-blue-400 rounded bg-blue-200 text-blue-600"
+							>
+								<div class="i-mi:hugeicons-search02 h-[24px] w-[24px]" />
+							</button>
+						</div>
+
+						<details class="text-[10px]">
+							<summary>
+								По классам
+							</summary>
+							<div class="mt-[8px] flex flex-wrap gap-2">
+								<label
+									v-for="cls in classes"
+									:key="cls"
+									for="cls"
+									:class="[
+										'p-1 border flex gap-1 items-center rounded'
+									]"
+								>
+									<input
+										type="checkbox"
+										:value="cls"
+									/>
+									<span>{{ cls }}</span>
+								</label>
+							</div>
+						</details>
 					</div>
 				</div>
 			</SnapChild>
